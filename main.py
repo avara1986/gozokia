@@ -8,9 +8,9 @@ __version__ = "0.0.1"
 __license__ = "MIT"
 
 from subprocess import call
-from io import Io
+from ino import Io
 
-INPUT_TYPE = "txt"
+INPUT_TYPE = "voice"
 OUTPUT_TYPE = "txtvoice"
 AUDIO_PLAYER = 'mpg123'
 
@@ -18,10 +18,6 @@ AUDIO_PLAYER = 'mpg123'
 class CommandSystem(Io):
     _MAGIC_WORDS = {"verficheros": 1,
                     "mail": 2, }
-
-    def __init__(self):
-        pass
-
     def execute(self, input=""):
         if type(input) == str:
             return self._is_magic_word(input)
@@ -64,11 +60,9 @@ class CommandSystem(Io):
 class Chat(Io):
     _MAGIC_WORDS = {"verficheros": 1,
                     "mail": 2, }
-
-    def __init__(self):
-        pass
-
     def execute(self, input=""):
+        print "llega 3"
+        print type(input)
         if type(input) == str:
             return self.get_response(input)
         return input
@@ -96,13 +90,13 @@ class Chat(Io):
 class Gozokia:
 
     def __init__(self, input_type="txt"):
-        self.io = Io(
+        self.ino = Io(
             input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
         input = True
-        self.cs = CommandSystem()
-        self.chat = Chat()
+        self.cs = CommandSystem(input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
+        self.chat = Chat(input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
         while input != False:
-            input = self.io.listen()
+            input = self.ino.listen()
             input = self.cs.execute(input)
             input = self.chat.execute(input)
 

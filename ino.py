@@ -22,7 +22,7 @@ class Io(CommandBase):
     _OUTPUT_METHODS = {"txt": 0, "voice": 1, "txtvoice": 2}
     _INPUT_SELECTED = 0
     _OUTPUT_SELECTED = 0
-    _THRESHOLD = 4000
+    _THRESHOLD = 2000
     _MAGIC_WORDS = {"h[á|a]blame": 1,
                     "escríbeme": 0,
                     "escr[i|í]beme": 0,
@@ -53,6 +53,7 @@ class Io(CommandBase):
         self._recognizer_r = sr.Recognizer(language="es-ES")
         self._recognizer_r.dynamic_energy_threshold = True
         self._recognizer_r.energy_threshold = self._THRESHOLD
+        self._recognizer_r.pause_threshold = .5
 
     def set_input_method(self, value):
         self._INPUT_SELECTED = value
@@ -90,11 +91,11 @@ class Io(CommandBase):
         if value is not False:
             self._OUTPUT_SELECTED = value
             if value == 0:
-                self.response("Entenido, ahora te escribiré")
+                self.response("Entendido, ahora te escribiré")
             elif value == 1:
-                self.response("Entenido, ahora te hablaré")
+                self.response("Entendido, ahora te hablaré")
             elif value == 2:
-                self.response("Entenido, ahora te escribiré y hablaré")
+                self.response("Entendido, ahora te escribiré y hablaré")
             return True
         return input
 
@@ -112,6 +113,7 @@ class Io(CommandBase):
                 # print("You said " + r.recognize(audio))    # recognize speech
                 # using Google Speech Recognition
                 input = self._recognizer_r.recognize(input_audio).lower()
+                input = input.encode('utf8')
             # speech is unintelligible
             except LookupError:
                 print("No te entiendo")
