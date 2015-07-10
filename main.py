@@ -7,10 +7,11 @@ __author__ = "Alberto Vara"
 __version__ = "0.0.1"
 __license__ = "MIT"
 
+import re
 from subprocess import call
 from ino import Io
 
-INPUT_TYPE = "voice"
+INPUT_TYPE = "txt"
 OUTPUT_TYPE = "txtvoice"
 AUDIO_PLAYER = 'mpg123'
 
@@ -18,6 +19,7 @@ AUDIO_PLAYER = 'mpg123'
 class CommandSystem(Io):
     _MAGIC_WORDS = {"verficheros": 1,
                     "mail": 2, }
+
     def execute(self, input=""):
         if type(input) == str:
             return self._is_magic_word(input)
@@ -60,9 +62,10 @@ class CommandSystem(Io):
 class Chat(Io):
     _MAGIC_WORDS = {"verficheros": 1,
                     "mail": 2, }
+
     def execute(self, input=""):
-        print "llega 3"
-        print type(input)
+        # print "llega 3"
+        # print type(input)
         if type(input) == str:
             return self.get_response(input)
         return input
@@ -81,7 +84,15 @@ class Chat(Io):
         elif response_input == 'adios' or response_input == 'adiós':
             self.response(text='Gero arté')
             return False
+        elif response_input == 'felicita a erik':
+            self.response(text='¡Felicidades erik!')
+        elif response_input == 'felicita a laura':
+            self.response(text='Felicidades laura!')
+        elif re.match(r'di (.)', response_input) is not None:
+            self.response(
+                re.search(r'di (?P<response>[\s\S]+)', response_input).group('response'))
         else:
+            ##
             self.response(
                 text='No te entiendo, ¿qué es %s?' % response_input)
         return True
@@ -93,8 +104,10 @@ class Gozokia:
         self.ino = Io(
             input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
         input = True
-        self.cs = CommandSystem(input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
-        self.chat = Chat(input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
+        self.cs = CommandSystem(
+            input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
+        self.chat = Chat(
+            input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
         while input != False:
             input = self.ino.listen()
             input = self.cs.execute(input)
