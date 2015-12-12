@@ -3,6 +3,9 @@ import unittest
 from time import sleep
 import os
 import random
+import sys
+
+sys.path.insert(0, os.getcwd())
 
 from gozokia import Gozokia
 
