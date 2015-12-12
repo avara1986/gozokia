@@ -1,15 +1,15 @@
 # encoding: utf-8
-"""Library for personal assistans."""
+"""
+I/O configurations
+"""
 
 __author__ = "Alberto Vara"
-__version__ = "0.0.1"
+__version__ = "0.2"
 __license__ = "MIT"
 
-import re
 import speech_recognition as sr
 import subprocess
 import urllib.request
-import urllib.parse
 from command import CommandBase
 
 

@@ -4,98 +4,14 @@
 """Library for personal assistans."""
 
 __author__ = "Alberto Vara"
-__version__ = "0.0.1"
+__version__ = "0.2"
 __license__ = "MIT"
 
-import re
-from subprocess import call
 from ino import Io
 
 INPUT_TYPE = "txt"
 OUTPUT_TYPE = "txt"
 AUDIO_PLAYER = 'mpg123'
-
-
-class CommandSystem(Io):
-    _MAGIC_WORDS = {"verficheros": 1,
-                    "mail": 2, }
-
-    def execute(self, input_result=""):
-        if type(input_result) == str:
-            return self._is_magic_word(input_result)
-        return input_result
-
-    def _is_magic_word(self, input_result):
-        value = self._check_magic_word(input_result)
-        if value is not False:
-            if value == 1:
-                call(["ls", "-l"])
-            elif value == 2:
-                self.send_mail()
-            return False
-        return input_result
-
-    def send_mail(self):
-        self.response(text='Dime asunto')
-        asunto = self.listen()
-        self.response(text='¿para quién?')
-        para = self.listen()
-        self.response(text='¿qué quieres enviar?')
-        cuerpo = self.listen()
-        import smtplib
-
-        sender = 'a.vara@gobalo.es'
-        receivers = [para]
-
-        message = """From: Gozokia <a.vara@gobalo.es>
-        To: To Person <%s>
-        Subject: %s
-        %s
-        """
-        message = message % (para, asunto, cuerpo)
-        smtpObj = smtplib.SMTP('localhost')
-        smtpObj.sendmail(sender, receivers, message)
-        print("Successfully sent email")
-        return True
-
-
-class Chat(Io):
-    _MAGIC_WORDS = {"verficheros": 1,
-                    "mail": 2, }
-
-    def execute(self, input=""):
-        # print "llega 3"
-        # print type(input)
-        if type(input) == str:
-            return self.get_response(input)
-        return input
-
-    def get_response(self, response_input):
-
-        print("+ Tú: ", response_input)
-        if response_input == 'hola':
-            self.response(text='hola')
-        elif response_input == 'qué tal':
-            self.response(text='bien, ¿y tu?')
-        elif response_input == 'alberto me quiere':
-            self.response(text='No te imaginas cuanto jijiji')
-        elif response_input == 'mecagoentuputamadre':
-            self.response(text='y yo en la tuya jejeje')
-        elif response_input == 'adios' or response_input == 'adiós':
-            self.response(text='Gero arté')
-            return False
-        elif response_input == 'felicita a erik':
-            self.response(text='¡Felicidades erik!')
-        elif response_input == 'felicita a laura':
-            self.response(text='Felicidades laura!')
-        elif re.match(r'di (.)', response_input) is not None:
-            self.response(
-                re.search(r'di (?P<response>[\s\S]+)', response_input).group('response'))
-        else:
-            ##
-            self.response(
-                text='No te entiendo, ¿qué es %s?' % response_input)
-        return True
 
 
 class Gozokia:
