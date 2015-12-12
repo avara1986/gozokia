@@ -1,7 +1,11 @@
 language: python
+sudo: false
+cache: false
+python:
+    - '3.3'
 
 install:
-  - pip install -q --use-mirrors tox==2.3.0 coveralls==1.1
+  - pip install -U tox==2.3.0 coveralls==1.1
 
 script:
   - coverage erase
