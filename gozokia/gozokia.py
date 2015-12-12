@@ -1,6 +1,9 @@
 # encoding: utf-8
 import os
-from gozokia.io import Io
+import sys
+sys.path.insert(0, os.getcwd())
+
+from .io import Io
 
 
 class Gozokia:
