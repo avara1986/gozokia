@@ -12,7 +12,7 @@ from subprocess import call
 from ino import Io
 
 INPUT_TYPE = "txt"
-OUTPUT_TYPE = "txtvoice"
+OUTPUT_TYPE = "txt"
 AUDIO_PLAYER = 'mpg123'
 
 
@@ -20,20 +20,20 @@ class CommandSystem(Io):
     _MAGIC_WORDS = {"verficheros": 1,
                     "mail": 2, }
 
-    def execute(self, input=""):
-        if type(input) == str:
-            return self._is_magic_word(input)
-        return input
+    def execute(self, input_result=""):
+        if type(input_result) == str:
+            return self._is_magic_word(input_result)
+        return input_result
 
-    def _is_magic_word(self, input):
-        value = self._check_magic_word(input)
+    def _is_magic_word(self, input_result):
+        value = self._check_magic_word(input_result)
         if value is not False:
             if value == 1:
                 call(["ls", "-l"])
             elif value == 2:
                 self.send_mail()
             return False
-        return input
+        return input_result
 
     def send_mail(self):
         self.response(text='Dime asunto')
@@ -55,7 +55,7 @@ class CommandSystem(Io):
         message = message % (para, asunto, cuerpo)
         smtpObj = smtplib.SMTP('localhost')
         smtpObj.sendmail(sender, receivers, message)
-        print "Successfully sent email"
+        print("Successfully sent email")
         return True
 
 
@@ -72,7 +72,7 @@ class Chat(Io):
 
     def get_response(self, response_input):
 
-        print "+ Tú: ", response_input
+        print("+ Tú: ", response_input)
         if response_input == 'hola':
             self.response(text='hola')
         elif response_input == 'qué tal':
@@ -103,16 +103,19 @@ class Gozokia:
     def __init__(self, input_type="txt"):
         self.ino = Io(
             input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
-        input = True
+        input_result = True
+        '''
         self.cs = CommandSystem(
             input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
+        '''
         self.chat = Chat(
             input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
-        while input != False:
-            input = self.ino.listen()
-            input = self.cs.execute(input)
-            input = self.chat.execute(input)
+        
+        while input_result != False:
+            input_result = self.ino.listen()
+            #input = self.cs.execute(input)
+            input_result = self.chat.execute(input_result)
 
 if __name__ == '__main__':
-    print '\n*** Gozokia ***'
+    print('\n*** Gozokia ***')
     Gozokia()
