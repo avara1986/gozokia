@@ -107,14 +107,18 @@ class Gozokia:
         '''
         self.cs = CommandSystem(
             input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
-        '''
+        
         self.chat = Chat(
             input_type=INPUT_TYPE, output_type=OUTPUT_TYPE, audio_player=AUDIO_PLAYER)
-        
+        '''
         while input_result != False:
+            '''
+            Get the audio or text input and return it
+            '''
             input_result = self.ino.listen()
-            #input = self.cs.execute(input)
-            input_result = self.chat.execute(input_result)
+            print("you said: {}".format(input_result))
+            #input_result = self.cs.execute(input_result)
+            #input_result = self.chat.execute(input_result)
 
 if __name__ == '__main__':
     print('\n*** Gozokia ***')
