@@ -1,4 +1,7 @@
 import speech_recognition as sr
+import urllib.request
+import urllib.parse
+import subprocess
 
 r = sr.Recognizer()
 m = sr.Microphone()
@@ -41,3 +44,48 @@ class VoiceRecognizerMixin(object):
             except LookupError:
                 input_result = ("I don't understand you")
         return input_result
+
+
+class VoiceResponseMixin(object):
+    # System program to play sounds
+    _AUDIO_PLAYER = "mpg123"
+
+    def set_audio_player(self, audio_player):
+        self._AUDIO_PLAYER = audio_player
+
+    def get_audio_player(self):
+        return self._AUDIO_PLAYER
+
+    def _set_ouput_limit(self, text):
+        limit = min(100, len(text))  # 100 characters is the current limit.
+        return text[0:limit]
+
+    def response_speak(self, text, language='es-ES', player=None):
+        fname = 'r.mp3'
+        text = self._set_ouput_limit(text)
+        """
+        Sends text to Google's text to speech service
+        and returns created speech (wav file). "
+        """
+        url = "http://translate.google.com/translate_tts"
+        # data = "?q=%s&textlen=%d&tl=%s&client=%s" % (text, len(text), language, "t")
+        data = urllib.parse.urlencode({"q": text, "textlen": len(text), "tl": language, "client": "t"})
+        url = url + "?" + data
+        headers = {}
+        headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
+        # TODO catch exceptions
+        print(url)
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            p = urllib.request.urlopen(req)
+        except Exception as e:
+            print(str(e))
+            return False
+        f = open(fname, 'wb')
+        f.write(p.read())
+        f.close()
+        self.__play_mp3('r.mp3')
+
+    def __play_mp3(self, path):
+        if self._AUDIO_PLAYER == 'mpg123':
+            subprocess.Popen(['mpg123', '-q', path]).wait()
