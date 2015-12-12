@@ -163,19 +163,3 @@ class Io(object):
     def __play_mp3(self, path):
         if self._AUDIO_PLAYER == 'mpg123':
             subprocess.Popen(['mpg123', '-q', path]).wait()
-    '''
-    def _is_magic_word(self, input_result):
-        value = self._check_magic_word(input_result)
-        if value is not False:
-            self._OUTPUT_SELECTED = value
-            if value == 0:
-                self.response("Entendido, ahora te escribiré")
-            elif value == 1:
-                self.response("Entendido, ahora te hablaré")
-            elif value == 2:
-                self.response("Entendido, ahora te hablaré")
-            elif value == 3:
-                self.response("Entendido, ahora te escribiré y hablaré")
-            return True
-        return input_result
-    '''

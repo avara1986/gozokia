@@ -8,4 +8,5 @@ from gozokia import Gozokia
 
 if __name__ == '__main__':
     print('\n*** Gozokia ***')
-    Gozokia()
+    gozokia = Gozokia()
+    gozokia.console()

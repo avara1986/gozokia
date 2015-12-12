@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2016 by Alberto Vara <a.vara.1986@gmail.com>
 
-
 import os
 from setuptools import setup, find_packages
 
+version = __import__('gozokia').__version__
+maintainer = __import__('gozokia').__maintainer__
+maintainer_email = __import__('gozokia').__email__
 
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 setup(
-    name="gozokia",
-    version="0.2",
-    author="Alberto Vara",
-    author_email="a.vara.1986@gmail.com",
+    name="Gozokia",
+    version=version,
+    author=maintainer,
+    author_email=maintainer_email,
     description="",
     long_description=(read('README.md')),
     classifiers=[
@@ -30,4 +32,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
+    test_suite="tests",
 )
