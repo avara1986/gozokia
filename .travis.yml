@@ -1,7 +1,7 @@
 language: python
 
 install:
-  - pip install -q --use-mirrors tox==2.3.0
+  - pip install -q --use-mirrors tox==2.3.0 coveralls==1.1
 
 script:
   - coverage erase
