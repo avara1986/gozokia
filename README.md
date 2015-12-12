@@ -12,3 +12,7 @@ En nuestro caso:
 mpg123
 
 SpeechRecognition
+
+sudo apt-get install python3-dev
+sudo apt-get install portaudio19-dev
+

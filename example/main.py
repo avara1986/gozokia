@@ -9,4 +9,7 @@ from gozokia import Gozokia
 if __name__ == '__main__':
     print('\n*** Gozokia ***')
     gozokia = Gozokia()
+    gozokia.set_io(input_type="value")
+    print(gozokia.io.listen(value="Hola hola!"))
+    gozokia.set_io(input_type="terminal_voice")
     gozokia.console()

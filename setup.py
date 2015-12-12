@@ -1,23 +1,25 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2016 by Alberto Vara <a.vara.1986@gmail.com>
-
-import os
 from setuptools import setup, find_packages
+import codecs
+import os
 
 version = __import__('gozokia').__version__
-maintainer = __import__('gozokia').__maintainer__
-maintainer_email = __import__('gozokia').__email__
+author = __import__('gozokia').__author__
+author_email = __import__('gozokia').__email__
 
-def read(*rnames):
-    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+if os.path.exists('README.rst'):
+    long_description = codecs.open('README.md', 'r', 'utf-8').read()
+else:
+    long_description = 'See https://github.com/avara1986/gozokia'
 
 setup(
     name="Gozokia",
     version=version,
-    author=maintainer,
-    author_email=maintainer_email,
+    author=author,
+    author_email=author_email,
     description="",
-    long_description=(read('README.md')),
+    long_description=long_description,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
