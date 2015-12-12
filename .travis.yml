@@ -1,12 +1,14 @@
 language: python
-sudo: true
+sudo: false
 cache: false
 python:
     - '3.3'
-
+addons:
+  apt:
+    sources:
+    - python3-dev
+    - portaudio19-dev
 install:
-  - sudo apt-get install -y python3-dev
-  - sudo apt-get install -y portaudio19-dev
   - pip install -U tox==2.3.0 coveralls==1.1
 
 script:
