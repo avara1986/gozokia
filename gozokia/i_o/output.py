@@ -1,7 +1,7 @@
 import sys
-
-from .io_base import OutputBase
-from .io_voice import VoiceResponseMixin
+import os
+from gozokia.i_o.io_base import OutputBase
+from gozokia.i_o.io_voice import VoiceResponseMixin
 
 
 class OutputTerminalText(OutputBase):
@@ -25,7 +25,7 @@ class OutputTerminalVoice(OutputBase, VoiceResponseMixin):
         super(OutputTerminalVoice, self).__init__(*args, **kwargs)
 
     def response(self, *args, **kwargs):
-        language = kwargs.get('language', "en-US")
+        language = kwargs.get('language', os.environ.get("GOZOKIA_LANGUAGE"))
         super(OutputTerminalVoice, self).response(*args, **kwargs)
         self.response_speak(kwargs.get('response', ""), language=language)
         return True

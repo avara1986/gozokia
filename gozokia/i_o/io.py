@@ -2,32 +2,26 @@
 """
 I/O configurations
 """
-import subprocess
-import urllib.request
+from __future__ import absolute_import, print_function, unicode_literals
 import importlib
-
-
-class GozokiaIoError(Exception):
-    '''raise this when there's a lookup error for my app'''
+from gozokia.i_o.io_base import GozokiaIoError
 
 
 class Io(object):
-    _LANGUAGE = "es-ES"
-    """
-    INPUT
-    """
-    _METHOD_DEFAULT = "terminal_txt"
-    """
-    OUTPUT
-    """
     _VALUE = 0
     _TXT = 1
     _VOICE = 2
     _TXT_VOICE = 3
-
+    _METHOD_DEFAULT = "terminal_txt"
+    """
+    INPUT
+    """
     _INPUT_METHODS = {"value": _VALUE, "terminal_txt": _TXT, "terminal_voice": _VOICE}
-    _OUTPUT_METHODS = {"value": _VALUE, "terminal_txt": _TXT, "terminal_voice": _VOICE, "terminal_txtvoice": _TXT_VOICE}
     _INPUT_SELECTED = 0
+    """
+    OUTPUT
+    """
+    _OUTPUT_METHODS = {"value": _VALUE, "terminal_txt": _TXT, "terminal_voice": _VOICE, "terminal_txtvoice": _TXT_VOICE}
     _OUTPUT_SELECTED = 0
     # System program to play sounds
     # _AUDIO_PLAYER = "mpg123"
@@ -47,7 +41,7 @@ class Io(object):
             raise GozokiaIoError(__class__.__name__ + ": Input method {} not exist".format(input_type))
 
         # Initialize the input method
-        input_module = importlib.import_module('gozokia.io.input')
+        input_module = importlib.import_module('gozokia.i_o.input')
         if self._INPUT_SELECTED == self._VALUE:
             self.input = input_module.InputValue()
         elif self._INPUT_SELECTED == self._TXT:
@@ -72,7 +66,7 @@ class Io(object):
             self._OUTPUT_SELECTED = self._OUTPUT_METHODS[output_type]
         except KeyError:
             raise GozokiaIoError(__class__.__name__ + ": Output method {} not exist".format(output_type))
-        output_module = importlib.import_module('gozokia.io.output')
+        output_module = importlib.import_module('gozokia.i_o.output')
         if self._OUTPUT_SELECTED == self._VALUE:
             self.output = output_module.OutputValue()
         elif self._OUTPUT_SELECTED == self._TXT:
@@ -83,5 +77,5 @@ class Io(object):
     def get_output_method(self):
         return self._OUTPUT_SELECTED
 
-    def response(self, text):
-        return self.output.response(response=text)
+    def response(self, text, language):
+        return self.output.response(response=text, language=language)

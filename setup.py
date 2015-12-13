@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2016 by Alberto Vara <a.vara.1986@gmail.com>
-from setuptools import setup, find_packages
+from setuptools import setup
 import codecs
 import os
 
@@ -39,8 +39,7 @@ setup(
     platforms=["any"],
     keywords="gozokia",
     url='https://github.com/avara1986/gozokia.git',
-    packages=find_packages(),
+    packages=["gozokia"],
     include_package_data=True,
-    zip_safe=False,
     test_suite="tests",
 )
