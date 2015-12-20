@@ -1,13 +1,12 @@
 # encoding: utf-8
 import unittest
-from time import sleep
 import os
-import random
 import sys
 
 sys.path.insert(0, os.getcwd())
-
 from gozokia.gozokia import Gozokia
+
+os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings_tests")
 
 
 class TerminalTest(unittest.TestCase):
