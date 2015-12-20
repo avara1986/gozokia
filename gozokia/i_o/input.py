@@ -1,7 +1,7 @@
 import sys
-import os
 from .io_base import InputBase
 from .io_voice import VoiceRecognizerMixin
+from gozokia.conf import settings
 
 
 class InputTerminalText(InputBase):
@@ -36,7 +36,7 @@ class InputTerminalVoice(InputBase, VoiceRecognizerMixin):
         self.set_voice_recognizer()
 
     def listen(self, *args, **kwargs):
-        language = kwargs.get('language', os.environ.get("GOZOKIA_LANGUAGE"))
+        language = kwargs.get('language', settings.GOZOKIA_LANGUAGE)
         super(InputTerminalVoice, self).listen(*args, **kwargs)
         self.set_voice_recognizer()
         input_result = self.listen_audio(language)

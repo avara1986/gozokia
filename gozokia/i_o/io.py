@@ -4,7 +4,7 @@ I/O configurations
 """
 from __future__ import absolute_import, print_function, unicode_literals
 import importlib
-from gozokia.i_o.io_base import GozokiaIoError
+from gozokia.i_o.exceptions import GozokiaIoError
 
 
 class Io(object):
@@ -77,5 +77,5 @@ class Io(object):
     def get_output_method(self):
         return self._OUTPUT_SELECTED
 
-    def response(self, text, language):
-        return self.output.response(response=text, language=language)
+    def response(self, text, *args, **kwargs):
+        return self.output.response(response=text, *args, **kwargs)

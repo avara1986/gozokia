@@ -1,7 +1,7 @@
-import sys
-import os
 from gozokia.i_o.io_base import OutputBase
 from gozokia.i_o.io_voice import VoiceResponseMixin
+from gozokia.i_o.exceptions import GozokiaOutputError
+from gozokia.conf import settings
 
 
 class OutputTerminalText(OutputBase):
@@ -25,7 +25,9 @@ class OutputTerminalVoice(OutputBase, VoiceResponseMixin):
         super(OutputTerminalVoice, self).__init__(*args, **kwargs)
 
     def response(self, *args, **kwargs):
-        language = kwargs.get('language', os.environ.get("GOZOKIA_LANGUAGE"))
+        language = kwargs.get('language', settings.GOZOKIA_LANGUAGE)
         super(OutputTerminalVoice, self).response(*args, **kwargs)
+        if 'response' not in kwargs:
+            raise GozokiaOutputError('Response not send')
         self.response_speak(kwargs.get('response', ""), language=language)
         return True

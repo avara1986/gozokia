@@ -3,7 +3,7 @@ import speech_recognition as sr
 import urllib.request
 import urllib.parse
 import subprocess
-from .io_base import GozokiaIoError
+from gozokia.i_o.exceptions import GozokiaIoError
 r = sr.Recognizer()
 m = sr.Microphone()
 

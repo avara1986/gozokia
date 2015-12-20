@@ -4,10 +4,6 @@ I/O configurations
 """
 
 
-class GozokiaIoError(Exception):
-    '''raise this when there's a lookup error for my app'''
-
-
 class InputBase(object):
 
     def __init__(self, *args, **kwargs):
