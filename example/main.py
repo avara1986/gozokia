@@ -4,8 +4,8 @@ import os
 import sys
 sys.path.insert(0, os.getcwd())
 from gozokia.gozokia import Gozokia
-
 from pymongo import MongoClient
+
 
 client = MongoClient("mongodb://192.168.100.7:27019")
 
