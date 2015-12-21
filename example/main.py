@@ -16,5 +16,5 @@ if __name__ == '__main__':
     gozokia = Gozokia()
     gozokia.set_io(input_type="value")
     print(gozokia.io.listen(value="Hola hola!"))
-    gozokia.set_io(input_type="terminal_txt", output_type="terminal_txt")
+    gozokia.set_io(output_type="terminal_txt")
     gozokia.console()

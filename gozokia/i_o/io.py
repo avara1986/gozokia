@@ -5,7 +5,7 @@ I/O configurations
 from __future__ import absolute_import, print_function, unicode_literals
 import importlib
 from gozokia.i_o.exceptions import GozokiaIoError
-
+from gozokia.conf import settings
 
 class Io(object):
     _VALUE = 0
@@ -27,9 +27,8 @@ class Io(object):
     # _AUDIO_PLAYER = "mpg123"
 
     def __init__(self, *args, **kwargs):
-        self.set_input_method(kwargs.get('input_type', self._METHOD_DEFAULT))
-        self.set_output_method(kwargs.get('output_type', self._METHOD_DEFAULT))
-        # s self.set_audio_player(kwargs.get('audio_player', self._AUDIO_PLAYER))
+        self.set_input_method(kwargs.get('input_type', settings.GOZOKIA_INPUT_TYPE))
+        self.set_output_method(kwargs.get('output_type', settings.GOZOKIA_OUTPUT_TYPE))
 
     '''
     Input configuration
