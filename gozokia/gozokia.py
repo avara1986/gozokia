@@ -22,7 +22,6 @@ def start_led():
 
     GPIO.setup(red_pin, GPIO.OUT)
 
-
     try:
         while True:
             GPIO.output(red_pin, True)  # LED on
@@ -30,7 +29,6 @@ def start_led():
             GPIO.output(red_pin, False)  # LED off
             time.sleep(0.5)  # delay 0.5 seconds
     finally:
-        print("Cleaning up")
         GPIO.cleanup()
 
 
@@ -58,6 +56,7 @@ class Gozokia:
         input_result = True
         p = multiprocessing.Process(target=start_led)
         p.start()
+        p.terminate()
         while input_result is not False:
             input_result = self.io.listen()
 
@@ -65,5 +64,6 @@ class Gozokia:
             output_result = "you said: {}".format(input_result)
 
             self.io.response(output_result)
+        p.terminate()
 
 
