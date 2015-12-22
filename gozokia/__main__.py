@@ -1,12 +1,12 @@
 # encoding: utf-8
-from __future__ import absolute_import, print_function, unicode_literals
 import sys
-
-from gozokia.gozokia import Gozokia
-
+import os
+from . import Gozokia
+os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
 print('aaa Number of arguments:', len(sys.argv), 'arguments.')
 print('Argument List:', str(sys.argv))
-gozokia = Gozokia()
-gozokia.set_io(input_type="value")
-gozokia.set_io(input_type="terminal_txt", output_type="terminal_txt")
-gozokia.console()
+
+goz = Gozokia()
+goz.initialize()
+goz.set_io(input_type="terminal_txt", output_type="terminal_txt")
+goz.console()

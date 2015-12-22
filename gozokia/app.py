@@ -1,5 +1,4 @@
 # encoding: utf-8
-from __future__ import absolute_import, print_function, unicode_literals
 import os
 from gozokia.i_o import Io
 from gozokia.conf import settings

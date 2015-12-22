@@ -3,7 +3,7 @@
 Default settings of Gozokia.
 Its coulds be defined on your Django settings
 '''
-from .gozokia import Gozokia
+from .app import Gozokia
 
 __author__ = "Alberto Vara"
 __email__ = "a.vara.1986@gmail.com"

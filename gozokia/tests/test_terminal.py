@@ -1,10 +1,7 @@
 # encoding: utf-8
 import unittest
 import os
-import sys
-
-sys.path.insert(0, os.getcwd())
-from gozokia.gozokia import Gozokia
+from gozokia import Gozokia
 
 os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings_tests")
 

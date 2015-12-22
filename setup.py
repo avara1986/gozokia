@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2016 by Alberto Vara <a.vara.1986@gmail.com>
-from setuptools import setup
+from setuptools import setup, find_packages
 import codecs
 import os
 
@@ -14,12 +14,13 @@ else:
     long_description = 'See https://github.com/avara1986/gozokia'
 
 setup(
-    name="Gozokia",
+    name="gozokia",
     version=version,
     author=author,
     author_email=author_email,
     description="",
     long_description=long_description,
+    scripts=['gozokia/__main__.py'],
     classifiers=[
         'Development Status :: 0.2 - Beta',
         "Intended Audience :: Developers",
@@ -39,7 +40,6 @@ setup(
     platforms=["any"],
     keywords="gozokia",
     url='https://github.com/avara1986/gozokia.git',
-    packages=["gozokia"],
+    packages=find_packages(),
     include_package_data=True,
-    test_suite="tests",
 )
