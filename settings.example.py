@@ -1,3 +1,5 @@
+DEBUG = True
+
 GOOGLE_TRANSLATE_KEY = ""
 
 GOZOKIA_INPUT_TYPE = "terminal_txt"
