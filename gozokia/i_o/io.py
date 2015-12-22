@@ -7,6 +7,7 @@ import importlib
 from gozokia.i_o.exceptions import GozokiaIoError
 from gozokia.conf import settings
 
+
 class Io(object):
     _VALUE = 0
     _TXT = 1
