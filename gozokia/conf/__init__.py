@@ -82,7 +82,6 @@ class Settings(BaseSettings):
         self._explicit_settings = set()
         for setting in dir(mod):
             if setting.isupper():
-                print()
                 setting_value = getattr(mod, setting)
 
                 if (setting in tuple_settings and
