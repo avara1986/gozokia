@@ -1,5 +1,4 @@
 # encoding: utf-8
-from __future__ import absolute_import, print_function, unicode_literals
 import os
 from gozokia.i_o import Io
 from gozokia.conf import settings
@@ -46,7 +45,9 @@ class Gozokia:
     PROJECT_DIR = os.getcwd()
 
     def __init__(self):
-        print(settings.GOZOKIA_INPUT_TYPE)
+        if settings.DEBUG is True:
+            print("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
+            print("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
         self.set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
                     output_type=settings.GOZOKIA_OUTPUT_TYPE,
                     )
