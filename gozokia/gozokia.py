@@ -34,6 +34,8 @@ def start_led():
 
 class Gozokia:
     rules_map = Rule()
+
+    io = None
     '''
     GOZOKIA_DIR: The directory where gozokia have been calling.
     '''
@@ -45,6 +47,9 @@ class Gozokia:
     PROJECT_DIR = os.getcwd()
 
     def __init__(self):
+        pass
+
+    def initialize(self):
         if settings.DEBUG is True:
             print("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
             print("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))

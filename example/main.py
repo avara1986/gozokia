@@ -29,6 +29,7 @@ class my_class():
         print('Hello method')
 
 if __name__ == '__main__':
+    goz.initialize()
     print('\n*** Gozokia ***')
     '''
     # INPUT TYPE:
