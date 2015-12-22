@@ -8,5 +8,6 @@ class Rule(object):
     def get_rules(self):
         return self.__rules
 
-    def __repr__(self):
-        return self.get_rules()
+    def __iter__(self):
+        for rule in self.get_rules():
+            yield rule
