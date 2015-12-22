@@ -2,9 +2,11 @@
 # encoding: utf-8
 import os
 import sys
+from pymongo import MongoClient
+
 sys.path.insert(0, os.getcwd())
 from gozokia import Gozokia
-from pymongo import MongoClient
+
 
 # First, declare our settings file:
 os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
@@ -15,9 +17,16 @@ goz = Gozokia()
 
 
 # Register our rules
-@goz.rule('test')
+@goz.rule('test_func')
 def my_function():
-    print('Hello')
+    print('Hello function')
+
+
+# Register our rules
+@goz.rule('test_class')
+class my_class():
+    def my_method(self):
+        print('Hello method')
 
 if __name__ == '__main__':
     print('\n*** Gozokia ***')
