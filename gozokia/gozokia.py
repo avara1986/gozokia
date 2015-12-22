@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os
 from gozokia.i_o import Io
 from gozokia.conf import settings
+from gozokia.core import Rule
 import time
 import multiprocessing
 
@@ -33,6 +34,7 @@ def start_led():
 
 
 class Gozokia:
+    rules_map = Rule()
     '''
     GOZOKIA_DIR: The directory where gozokia have been calling.
     '''
@@ -52,11 +54,26 @@ class Gozokia:
     def set_io(self, *args, **kwargs):
         self.io = Io(*args, **kwargs)
 
+    def rule(self, rule, **options):
+        """A decorator that is used to register a view function for a
+        given rule.
+        """
+        def decorator(f):
+            self.add_rule(rule, f, **options)
+            return f
+        return decorator
+
+    def add_rule(self, rule, view_func=None, **options):
+        self.rules_map.add({rule: view_func})
+
     def console(self):
         input_result = True
         p = multiprocessing.Process(target=start_led)
         p.start()
-        p.terminate()
+        if settings.DEBUG is True:
+            print("***** Activate rules *****")
+            for rule in self.rules_map:
+                print(rule)
         while input_result is not False:
             input_result = self.io.listen()
 

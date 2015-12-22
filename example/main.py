@@ -3,18 +3,26 @@
 import os
 import sys
 sys.path.insert(0, os.getcwd())
-from gozokia.gozokia import Gozokia
+from gozokia import Gozokia
 from pymongo import MongoClient
 
+# First, declare our settings file:
+os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
 
-client = MongoClient("mongodb://192.168.100.7:27019")
+# Initialize
+goz = Gozokia()
+# client = MongoClient("mongodb://192.168.100.7:27019")
 
+
+# Register our rules
+@goz.rule('test')
+def my_function():
+    print('Hello')
 
 if __name__ == '__main__':
-    os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
+
     print('\n*** Gozokia ***')
-    gozokia = Gozokia()
-    gozokia.set_io(input_type="value")
-    print(gozokia.io.listen(value="Hola hola!"))
-    gozokia.set_io(output_type="terminal_txt")
-    gozokia.console()
+    goz.set_io(input_type="value")
+    print(goz.io.listen(value="Hola hola!"))
+    goz.set_io(output_type="terminal_txt")
+    goz.console()
