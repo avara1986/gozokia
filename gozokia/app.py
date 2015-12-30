@@ -3,6 +3,7 @@ import os
 from gozokia.i_o import Io
 from gozokia.conf import settings
 from gozokia.core import Rule
+from gozokia.db.base import ModelBase
 import time
 import multiprocessing
 
@@ -76,17 +77,19 @@ class Gozokia:
         input_result = True
         p = multiprocessing.Process(target=start_led)
         p.start()
+        db = ModelBase()
         if settings.DEBUG is True:
             print("***** Activate rules *****")
             for rule in self.rules_map:
                 print(rule)
         while input_result is not False:
             input_result = self.io.listen()
-
+            db.set({'text': input_result, 'type': 'I'})
             # TODO: Get logic here
             output_result = "you said: {}".format(input_result)
-
+            db.set({'text': output_result, 'type': 'O'})
             self.io.response(output_result)
+        print(db.get())
         p.terminate()
 
 

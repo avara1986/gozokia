@@ -9,7 +9,7 @@ GOZOKIA_LANGUAGE = "en-US"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mongodb',
+        'ENGINE': 'gozokia.db.backends.memory',
         'NAME': 'gozokia',
         'USER': '',
         'PASSWORD': '',
