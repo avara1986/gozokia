@@ -59,6 +59,7 @@ class Gozokia:
         self.set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
                     output_type=settings.GOZOKIA_OUTPUT_TYPE,
                     )
+        self.analyzer = Analyzer()
 
     def set_io(self, *args, **kwargs):
         self.io = Io(*args, **kwargs)
@@ -75,23 +76,31 @@ class Gozokia:
     def add_rule(self, rule, view_func=None, **options):
         self.rules_map.add({rule: view_func})
 
+    def eval(self, sentence):
+        self.analyzer.set(sentence)
+        entities = self.analyzer.get_entities()
+        return (r.response for r in self.rules_map if r.condition(entities))
+
     def console(self):
         input_result = True
         p = multiprocessing.Process(target=start_led)
         p.start()
         db = ModelBase()
-        analyzer = Analyzer()
+
         if settings.DEBUG is True:
             print("***** Activate rules *****")
+            import ipdb; ipdb.set_trace()
             for rule in self.rules_map:
+                rule.items()
+                dict.items()
                 print(rule)
         while input_result is not False:
             input_result = self.io.listen()
             db.set({'text': input_result, 'type': 'I'})
-            analyzer.set(input_result)
+            output_result = self.eval(input_result)
+            print(output_result)
             # TODO: Get logic here
             output_result = "you said: {}".format(input_result)
-            print(analyzer.get_tagged())
             db.set({'text': output_result, 'type': 'O'})
             self.io.response(output_result)
         print(db.get())

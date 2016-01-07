@@ -2,7 +2,7 @@
 # encoding: utf-8
 import os
 import sys
-from pymongo import MongoClient
+# from pymongo import MongoClient
 sys.path.insert(0, os.getcwd())
 from gozokia import Gozokia
 from example.my_class import MyClass
@@ -14,12 +14,6 @@ os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
 goz = Gozokia()
 # client = MongoClient("mongodb://192.168.100.7:27019")
 
-
-# Register our function rules
-# @goz.rule('test_func')
-def my_function():
-    print('Hello function')
-
 # Register our class rules
 goz.rule('test_class')(MyClass)
 
@@ -27,8 +21,11 @@ goz.rule('test_class')(MyClass)
 # Register our class rules
 @goz.rule('test_class2')
 class MyClass2():
-    def my_method(self):
-        print('Hello method')
+    def condition(self, *args, **kwargs):
+        return False
+
+    def response(self, *args, **kwargs):
+        return ('My Class2')
 
 # Run Gozokia console
 if __name__ == '__main__':

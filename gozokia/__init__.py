@@ -17,5 +17,11 @@ goz = Gozokia()
 
 # Register our rules
 @goz.rule('foo')
-def bar():
-    print('Hello')
+class bar():
+    def condition(self, *args, **kwargs):
+        import ipdb; ipdb.set_trace()
+        sentence = kwargs.get('sentence')
+        return True
+
+    def response(self, *args, **kwargs):
+        return ('foo')

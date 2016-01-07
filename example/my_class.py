@@ -1,3 +1,6 @@
 class MyClass():
-    def my_method(self):
-        print('Hello method')
+    def condition(self, *args, **kwargs):
+        return False
+
+    def response(self, *args, **kwargs):
+        return ('My Class')
