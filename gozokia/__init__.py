@@ -16,12 +16,12 @@ goz = Gozokia()
 
 
 # Register our rules
-@goz.rule('foo')
+@goz.rule('foo', type="rise")
 class bar():
     def condition(self, *args, **kwargs):
-        import ipdb; ipdb.set_trace()
         sentence = kwargs.get('sentence')
-        return True
+        if sentence == "bar":
+            return True
 
     def response(self, *args, **kwargs):
         return ('foo')

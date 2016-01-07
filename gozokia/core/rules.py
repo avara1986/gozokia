@@ -7,8 +7,17 @@ class Rule(object):
     def add(self, rule):
         self.__rules.append(rule)
 
-    def get_rules(self):
-        return sorted(self.__rules, key=itemgetter('rank'))
+    def get_rules(self, cond=None):
+        f = lambda x: True
+        if cond == 'raise' or cond == 'objetive':
+            f = lambda x: x['type'] == cond
+        return sorted(map(f, self.__rules), key=itemgetter('rank'))
+
+    def get_rules_rises(self):
+        return self.get_rules('raise')
+
+    def get_rules_objetives(self):
+        return self.get_rules('objetive')
 
     def __getitem__(self, key):
         if key in self.__rules:
