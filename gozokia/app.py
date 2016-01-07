@@ -74,7 +74,10 @@ class Gozokia:
         return decorator
 
     def add_rule(self, rule, view_func=None, **options):
-        self.rules_map.add({rule: view_func})
+        rank = 10
+        if 'rank' in options and type(options['rank']) is int:
+            rank = options['rank']
+        self.rules_map.add({rule: view_func, 'rank': rank})
 
     def eval(self, sentence):
         self.analyzer.set(sentence)
@@ -89,20 +92,19 @@ class Gozokia:
 
         if settings.DEBUG is True:
             print("***** Activate rules *****")
-            import ipdb; ipdb.set_trace()
+            # import ipdb; ipdb.set_trace()
             for rule in self.rules_map:
-                rule.items()
-                dict.items()
                 print(rule)
         while input_result is not False:
             input_result = self.io.listen()
-            db.set({'text': input_result, 'type': 'I'})
-            output_result = self.eval(input_result)
-            print(output_result)
-            # TODO: Get logic here
-            output_result = "you said: {}".format(input_result)
-            db.set({'text': output_result, 'type': 'O'})
-            self.io.response(output_result)
+            if input_result:
+                db.set({'text': input_result, 'type': 'I'})
+                output_result = self.eval(input_result)
+                print(output_result)
+                # TODO: Get logic here
+                output_result = "you said: {}".format(input_result)
+                db.set({'text': output_result, 'type': 'O'})
+                self.io.response(output_result)
         print(db.get())
         p.terminate()
 

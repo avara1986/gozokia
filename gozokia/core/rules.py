@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 
 class Rule(object):
     __rules = []
@@ -6,12 +8,13 @@ class Rule(object):
         self.__rules.append(rule)
 
     def get_rules(self):
-        return self.__rules
+        return sorted(self.__rules, key=itemgetter('rank'))
+
+    def __getitem__(self, key):
+        if key in self.__rules:
+            return self.__rules[key]
+        raise KeyError
 
     def __iter__(self):
         for rule in self.get_rules():
             yield rule
-
-    def __iteritems__(self):
-        for key, value in self.get_rules().items():
-            yield key, value
