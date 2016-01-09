@@ -1,7 +1,7 @@
 from operator import itemgetter
 
 
-class Rule(object):
+class Rules(object):
     __rules = []
 
     _RAISE_COND = "raise"

@@ -2,7 +2,7 @@
 import os
 from gozokia.i_o import Io
 from gozokia.conf import settings
-from gozokia.core import Rule
+from gozokia.core import Rules
 from gozokia.core.text_processor import Analyzer
 from gozokia.db.base import ModelBase
 
@@ -92,7 +92,7 @@ class Gozokia:
         tags = self.analyzer.get_tagged()
         for r in self.rules_map.get_raises():
             r_class = r['class']
-            if r_class.condition(sentence=tags):
+            if r_class.condition(gozokia=self, sentence=tags):
                 response = r_class.response()
                 break
         for r in self.rules_map.get_raises():
