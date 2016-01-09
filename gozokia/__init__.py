@@ -16,12 +16,21 @@ goz = Gozokia()
 
 
 # Register our rules
-@goz.rule('foo', type="rise")
+@goz.rule('foo', type=goz.RAISE_COND, rank=10)
 class bar():
-    def condition(self, *args, **kwargs):
+    completed = False
+
+    @classmethod
+    def condition(*args, **kwargs):
         sentence = kwargs.get('sentence')
-        if sentence == "bar":
+        if len([True for t in sentence if t == ('foo', 'NN')]) > 0:
             return True
 
-    def response(self, *args, **kwargs):
-        return ('foo')
+    @classmethod
+    def response(cls, *args, **kwargs):
+        cls.completed = True
+        return ('bar')
+
+    @classmethod
+    def is_completed(cls, *args, **kwargs):
+        return cls.completed

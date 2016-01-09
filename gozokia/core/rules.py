@@ -4,20 +4,29 @@ from operator import itemgetter
 class Rule(object):
     __rules = []
 
+    _RAISE_COND = "raise"
+
+    _OBJETIVE_COND = "objetive"
+
     def add(self, rule):
         self.__rules.append(rule)
 
-    def get_rules(self, cond=None):
+    def get_rules(self, type=None):
         f = lambda x: True
-        if cond == 'raise' or cond == 'objetive':
-            f = lambda x: x['type'] == cond
-        return sorted(map(f, self.__rules), key=itemgetter('rank'))
+        if type == self._RAISE_COND or type == self._OBJETIVE_COND:
+            f = lambda x: x['type'] == type
+        return sorted(filter(f, self.__rules), key=itemgetter('rank'))
 
-    def get_rules_rises(self):
-        return self.get_rules('raise')
+    def get_raises(self):
+        for rule in self.get_rules(type=self._RAISE_COND):
+            yield rule
 
-    def get_rules_objetives(self):
-        return self.get_rules('objetive')
+    def pop(self, rule):
+        self.__rules = [r for r in self if r != rule]
+
+    def get_objetives(self):
+        for rule in self.get_rules(type=self._OBJETIVE_COND):
+            yield rule
 
     def __getitem__(self, key):
         if key in self.__rules:

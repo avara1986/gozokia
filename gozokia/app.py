@@ -49,6 +49,10 @@ class Gozokia:
     '''
     PROJECT_DIR = os.getcwd()
 
+    RAISE_COND = "raise"
+
+    OBJETIVE_COND = "objetive"
+
     def __init__(self):
         pass
 
@@ -75,14 +79,27 @@ class Gozokia:
 
     def add_rule(self, rule, view_func=None, **options):
         rank = 10
+        type_rule = None
         if 'rank' in options and type(options['rank']) is int:
             rank = options['rank']
-        self.rules_map.add({rule: view_func, 'rank': rank})
+        if 'type' in options and type(options['type']) is str:
+            type_rule = options['type']
+        self.rules_map.add({'rule': rule, 'class': view_func, 'rank': rank, 'type': type_rule})
 
     def eval(self, sentence):
         self.analyzer.set(sentence)
-        entities = self.analyzer.get_entities()
-        return (r.response for r in self.rules_map if r.condition(entities))
+        response = None
+        tags = self.analyzer.get_tagged()
+        for r in self.rules_map.get_raises():
+            r_class = r['class']
+            if r_class.condition(sentence=tags):
+                response = r_class.response()
+                break
+        for r in self.rules_map.get_raises():
+            r_class = r['class']
+            if r_class.is_completed():
+                self.rules_map.pop(r)
+        return response
 
     def console(self):
         input_result = True
@@ -91,10 +108,16 @@ class Gozokia:
         db = ModelBase()
 
         if settings.DEBUG is True:
-            print("***** Activate rules *****")
-            # import ipdb; ipdb.set_trace()
+            print("***** Activated rules *****")
             for rule in self.rules_map:
                 print(rule)
+            print("***** Activated raises *****")
+            for rule in self.rules_map.get_raises():
+                print(rule)
+            print("***** Activated objectives *****")
+            for rule in self.rules_map.get_objetives():
+                print(rule)
+
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:
@@ -102,7 +125,8 @@ class Gozokia:
                 output_result = self.eval(input_result)
                 print(output_result)
                 # TODO: Get logic here
-                output_result = "you said: {}".format(input_result)
+                if output_result == None:
+                    output_result = "you said: {}".format(input_result)
                 db.set({'text': output_result, 'type': 'O'})
                 self.io.response(output_result)
         print(db.get())
