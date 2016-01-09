@@ -9,5 +9,5 @@ class Database():
         return self.__records
 
     def set(self, *args, **kwargs):
-        print(args)
+        # print(args)
         self.__records.append(args[0])

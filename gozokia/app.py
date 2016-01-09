@@ -36,7 +36,7 @@ def start_led():
 
 
 class Gozokia:
-    rules_map = Rule()
+    rules_map = Rules()
 
     io = None
     '''
@@ -106,7 +106,7 @@ class Gozokia:
         p = multiprocessing.Process(target=start_led)
         p.start()
         db = ModelBase()
-
+        '''
         if settings.DEBUG is True:
             print("***** Activated rules *****")
             for rule in self.rules_map:
@@ -117,14 +117,15 @@ class Gozokia:
             print("***** Activated objectives *****")
             for rule in self.rules_map.get_objetives():
                 print(rule)
-
+        '''
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:
                 db.set({'text': input_result, 'type': 'I'})
                 output_result = self.eval(input_result)
-                print(output_result)
+                # print(output_result)
                 # TODO: Get logic here
+                print(self.analyzer.get_tagged())
                 if output_result == None:
                     output_result = "you said: {}".format(input_result)
                 db.set({'text': output_result, 'type': 'O'})

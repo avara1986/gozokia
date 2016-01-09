@@ -7,7 +7,8 @@ class Debug():
     def condition(cls, *args, **kwargs):
         cls.gozokia = kwargs.get('gozokia')
         cls.sentence = kwargs.get('sentence')
-        if len([True for t in cls.sentence if t == ('foo', 'NN')]) > 0:
+        cond = ('show', 'VB'), ('me', 'PRP'), ('your', 'PRP$'), ('rules', 'NNS')
+        if len([True for t in cls.sentence if t in cond]) == len(cond):
             return True
 
     @classmethod
