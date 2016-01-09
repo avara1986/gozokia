@@ -106,18 +106,6 @@ class Gozokia:
         p = multiprocessing.Process(target=start_led)
         p.start()
         db = ModelBase()
-        '''
-        if settings.DEBUG is True:
-            print("***** Activated rules *****")
-            for rule in self.rules_map:
-                print(rule)
-            print("***** Activated raises *****")
-            for rule in self.rules_map.get_raises():
-                print(rule)
-            print("***** Activated objectives *****")
-            for rule in self.rules_map.get_objetives():
-                print(rule)
-        '''
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:
