@@ -49,9 +49,9 @@ class Gozokia:
     '''
     PROJECT_DIR = os.getcwd()
 
-    RAISE_COND = "raise"
+    RAISE_COND = 1
 
-    OBJETIVE_COND = "objetive"
+    OBJETIVE_COND = 2
 
     def __init__(self):
         pass
@@ -90,6 +90,7 @@ class Gozokia:
         self.analyzer.set(sentence)
         response = None
         tags = self.analyzer.get_tagged()
+        # import ipdb; ipdb.set_trace();
         for r in self.rules_map.get_raises():
             r_class = r['class']
             if r_class.condition(gozokia=self, sentence=tags):
