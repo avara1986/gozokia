@@ -1,29 +1,26 @@
-class Debug():
-    completed = False
+from gozokia.core.rules import RuleBase
+
+
+class Debug(RuleBase):
+
     gozokia = None
     object = None
 
-    @classmethod
-    def condition(cls, *args, **kwargs):
-        cls.gozokia = kwargs.get('gozokia')
-        cls.sentence = kwargs.get('sentence')
+    def condition(self, *args, **kwargs):
+        self.gozokia = kwargs.get('gozokia')
+        self.sentence = kwargs.get('sentence')
         cond = ('show', 'VB'), ('me', 'PRP'), ('your', 'PRP$'), ('rules', 'NNS')
-        if len([True for t in cls.sentence if t in cond]) == len(cond):
+        if len([True for t in self.sentence if t in cond]) == len(cond):
             return True
 
-    @classmethod
-    def response(cls, *args, **kwargs):
+    def response(self, *args, **kwargs):
         result = ("***** Activated rules *****\n")
-        for rule in cls.gozokia.rules_map:
+        for rule in self.gozokia.rules:
             result += str(rule) + "\n"
         result += ("***** Activated raises *****\n")
-        for rule in cls.gozokia.rules_map.get_raises():
+        for rule in self.gozokia.rules.get_raises():
             result += str(rule) + "\n"
         result += ("***** Activated objectives *****\n")
-        for rule in cls.gozokia.rules_map.get_objetives():
+        for rule in self.gozokia.rules.get_objetives():
             result += str(rule) + "\n"
         return result
-
-    @classmethod
-    def is_completed(cls, *args, **kwargs):
-        return cls.completed

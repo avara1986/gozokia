@@ -36,7 +36,7 @@ def start_led():
 
 
 class Gozokia:
-    rules_map = Rules()
+    rules = Rules()
 
     io = None
     '''
@@ -72,34 +72,28 @@ class Gozokia:
         """A decorator that is used to register a view function for a
         given rule.
         """
-        def decorator(f):
-            self.add_rule(rule, f, **options)
-            return f
+        def decorator(rule_class):
+            self.add_rule(rule, rule_class, **options)
+            return rule_class
         return decorator
 
-    def add_rule(self, rule, view_func=None, **options):
-        rank = 10
-        type_rule = None
-        if 'rank' in options and type(options['rank']) is int:
-            rank = options['rank']
-        if 'type' in options and type(options['type']) is str:
-            type_rule = options['type']
-        self.rules_map.add({'rule': rule, 'class': view_func, 'rank': rank, 'type': type_rule})
+    def add_rule(self, rule_name, rule_class=None, **options):
+        self.rules.add(rule_name, rule_class, **options)
 
     def eval(self, sentence):
         self.analyzer.set(sentence)
         response = None
         tags = self.analyzer.get_tagged()
         # import ipdb; ipdb.set_trace();
-        for r in self.rules_map.get_raises():
+        for r in self.rules.get_raises():
             r_class = r['class']
             if r_class.condition(gozokia=self, sentence=tags):
                 response = r_class.response()
                 break
-        for r in self.rules_map.get_raises():
+        for r in self.rules.get_raises():
             r_class = r['class']
             if r_class.is_completed():
-                self.rules_map.pop(r)
+                self.rules.pop(r)
         return response
 
     def console(self):
@@ -107,6 +101,16 @@ class Gozokia:
         p = multiprocessing.Process(target=start_led)
         p.start()
         db = ModelBase()
+        result = ("***** Activated rules *****\n")
+        for rule in self.rules:
+            result += str(rule) + "\n"
+        result += ("***** Activated raises *****\n")
+        for rule in self.rules.get_raises():
+            result += str(rule) + "\n"
+        result += ("***** Activated objectives *****\n")
+        for rule in self.rules.get_objetives():
+            result += str(rule) + "\n"
+        print(result)
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:

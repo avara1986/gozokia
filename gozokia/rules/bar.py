@@ -1,17 +1,13 @@
-class Bar():
-    completed = False
+from gozokia.core.rules import RuleBase
 
-    @classmethod
-    def condition(*args, **kwargs):
+
+class Bar(RuleBase):
+
+    def condition(self, *args, **kwargs):
         sentence = kwargs.get('sentence')
         if len([True for t in sentence if t == ('foo', 'NN')]) > 0:
             return True
 
-    @classmethod
-    def response(cls, *args, **kwargs):
-        cls.completed = True
+    def response(self, *args, **kwargs):
+        self.completed = True
         return ('bar')
-
-    @classmethod
-    def is_completed(cls, *args, **kwargs):
-        return cls.completed
