@@ -69,13 +69,13 @@ class Gozokia:
         if settings.DEBUG is True:
             print("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
             print("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
-        self.__set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
+        self.set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
                     output_type=settings.GOZOKIA_OUTPUT_TYPE,
                     )
         self.analyzer = Analyzer()
         self.db = ModelBase()
 
-    def __set_io(self, *args, **kwargs):
+    def set_io(self, *args, **kwargs):
         self.io = Io(*args, **kwargs)
 
     def rule(self, **options):
@@ -111,7 +111,7 @@ class Gozokia:
                 output_result = self.eval(input_result)
 
                 print(self.analyzer.get_tagged())
-                if output_result == None:
+                if output_result is None:
                     output_result = "you said: {}".format(input_result)
                     self.db.set({'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
                 self.io.response(output_result)
