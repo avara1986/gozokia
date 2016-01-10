@@ -36,8 +36,17 @@ def start_led():
 
 
 class Gozokia:
+    '''
+    Dictionary of rules
+    '''
     rules = Rules()
-
+    '''
+    Text analyzer controller
+    '''
+    analyzer = None
+    '''
+    Input/Output controller
+    '''
     io = None
     '''
     GOZOKIA_DIR: The directory where gozokia have been calling.
@@ -60,70 +69,53 @@ class Gozokia:
         if settings.DEBUG is True:
             print("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
             print("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
-        self.set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
+        self.__set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
                     output_type=settings.GOZOKIA_OUTPUT_TYPE,
                     )
         self.analyzer = Analyzer()
+        self.db = ModelBase()
 
-    def set_io(self, *args, **kwargs):
+    def __set_io(self, *args, **kwargs):
         self.io = Io(*args, **kwargs)
 
-    def rule(self, rule, **options):
+    def rule(self, **options):
         """A decorator that is used to register a view function for a
         given rule.
         """
         def decorator(rule_class):
-            self.add_rule(rule, rule_class, **options)
+            self.__add_rule(rule_class, **options)
             return rule_class
         return decorator
 
-    def add_rule(self, rule_name, rule_class=None, **options):
-        self.rules.add(rule_name, rule_class, **options)
+    def __add_rule(self, rule_class, **options):
+        self.rules.add(rule_class, **options)
 
     def eval(self, sentence):
         self.analyzer.set(sentence)
-        response = None
         tags = self.analyzer.get_tagged()
-        # import ipdb; ipdb.set_trace();
-        for r in self.rules.get_raises():
-            r_class = r['class']
-            if r_class.condition(gozokia=self, sentence=tags):
-                response = r_class.response()
-                break
-        for r in self.rules.get_raises():
-            r_class = r['class']
-            if r_class.is_completed():
-                self.rules.pop(r)
-        return response
+        rule = self.rules.get_rule(self, tags)
+        if rule is not None:
+            rule_object = rule["class"]
+            self.db.set({'text': rule_object.response(), 'type': 'O', 'rule': rule})
+            return rule_object.response()
+        return None
 
     def console(self):
         input_result = True
         p = multiprocessing.Process(target=start_led)
         p.start()
-        db = ModelBase()
-        result = ("***** Activated rules *****\n")
-        for rule in self.rules:
-            result += str(rule) + "\n"
-        result += ("***** Activated raises *****\n")
-        for rule in self.rules.get_raises():
-            result += str(rule) + "\n"
-        result += ("***** Activated objectives *****\n")
-        for rule in self.rules.get_objetives():
-            result += str(rule) + "\n"
-        print(result)
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:
-                db.set({'text': input_result, 'type': 'I'})
+                self.db.set({'text': input_result, 'type': 'I'})
                 output_result = self.eval(input_result)
-                # print(output_result)
-                # TODO: Get logic here
+
                 print(self.analyzer.get_tagged())
                 if output_result == None:
                     output_result = "you said: {}".format(input_result)
-                db.set({'text': output_result, 'type': 'O'})
+                    self.db.set({'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
                 self.io.response(output_result)
-        print(db.get())
+        print(self.db.get())
         p.terminate()
 
 

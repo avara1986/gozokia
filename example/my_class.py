@@ -1,14 +1,10 @@
-class MyClassObjetive():
-    completed = False
+from gozokia.core.rules import RuleBase
 
-    @classmethod
-    def condition(cls, *args, **kwargs):
+
+class MyClassObjetive(RuleBase):
+
+    def condition(self, *args, **kwargs):
         return False
 
-    @classmethod
-    def response(cls, self, *args, **kwargs):
+    def response(self, *args, **kwargs):
         return ('My Class Objetive')
-
-    @classmethod
-    def is_completed(cls, *args, **kwargs):
-        return cls.completed

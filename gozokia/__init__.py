@@ -16,5 +16,5 @@ goz = Gozokia()
 
 
 # Register our rules
-goz.rule('foo', type=goz.RAISE_COND, rank=100)(Bar)
-goz.rule('debug', type=goz.RAISE_COND, rank=100)(Debug)
+goz.rule(name='foo', type=goz.RAISE_COND, rank=100)(Bar)
+goz.rule(name='debug', type=goz.RAISE_COND, rank=100)(Debug)
