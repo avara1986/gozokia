@@ -19,11 +19,11 @@ class ModelBase(object):
     def get_db(self):
         return self.db
 
-    def get(self):
-        return self.db.get()
+    def get(self, key=None):
+        return self.db.get(key)
 
     def set_chat(self, chat):
-        self.set({'chat': chat})
+        self.db.set({'chat': chat})
 
     def set(self, *args, **kwargs):
         return self.db.set(*args, **kwargs)

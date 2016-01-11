@@ -20,6 +20,9 @@ class RuleBase(object):
     def reload_rule(self):
         if self.reload:
             self.completed = False
+            return True
+        else:
+            return False
 
     def __str__(self):
         return self.__class__.__name__
@@ -58,7 +61,7 @@ class Rules(object):
     def get_rules(self, type_rule=None):
         f = lambda x: True
         if type_rule == self._RAISE_COND or type_rule == self._OBJETIVE_COND:
-            f = lambda x: x['type'] == type_rule
+            f = lambda x: x['type'] == type_rule and x[self.__RULE_KEY_CLASS].completed == False
         return sorted(filter(f, self.__rules), key=itemgetter('rank'))
 
     def get_raises(self):
@@ -70,16 +73,24 @@ class Rules(object):
             yield rule
 
     def get_rule(self, gozokia, sentence):
+        # TODO:
         if self.exist_active_rule():
-            if self.get_active_rule(self.__RULE_KEY_CLASS).is_completed():
-                self.get_active_rule(self.__RULE_KEY_CLASS).reload_rule()
+            if self.get_active_rule(self.__RULE_KEY_CLASS).is_completed(gozokia=gozokia, sentence=sentence):
+                print("RULE {} is completed".format(self.get_active_rule(self.__RULE_KEY_CLASS)))
+                if self.get_active_rule(self.__RULE_KEY_CLASS).reload_rule() is False:
+                    self.pop(self.get_active_rule())
                 self.set_active_rule(None)
 
         if not self.exist_active_rule():
-            for r in self.get_raises():
+            for r in self.get_objetives():
                 if r['class'].condition(gozokia=gozokia, sentence=sentence):
                     self.set_active_rule(r)
                     break
+            if not self.exist_active_rule():
+                for r in self.get_raises():
+                    if r['class'].condition(gozokia=gozokia, sentence=sentence):
+                        self.set_active_rule(r)
+                        break
 
         return self.__active_rule
 
