@@ -22,5 +22,8 @@ class ModelBase(object):
     def get(self):
         return self.db.get()
 
+    def set_chat(self, chat):
+        self.set({'chat': chat})
+
     def set(self, *args, **kwargs):
         return self.db.set(*args, **kwargs)

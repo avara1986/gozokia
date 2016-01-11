@@ -21,9 +21,11 @@ class Debug(RuleBase):
             return True
 
     def response(self, *args, **kwargs):
-
         if self.__SELECTED_OPTION is not None:
             if self.__OPTIONS[self.__SELECTED_OPTION] == 'list_rules':
+                self.gozokia.db.set("TEST")
+                self.gozokia.db.set("TEST")
+                self.gozokia.db.set("TEST")
                 result = ("***** Activated rules *****\n")
                 for rule in self.gozokia.rules:
                     result += str(rule) + "\n"

@@ -96,8 +96,9 @@ class Gozokia:
         rule = self.rules.get_rule(self, tags)
         if rule is not None:
             rule_object = rule["class"]
-            self.db.set({'text': rule_object.response(), 'type': 'O', 'rule': rule})
-            return rule_object.response()
+            response = rule_object.response()
+            self.db.set_chat({'text': response, 'type': 'O', 'rule': rule})
+            return response
         return None
 
     def console(self):
@@ -107,13 +108,13 @@ class Gozokia:
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:
-                self.db.set({'text': input_result, 'type': 'I'})
+                self.db.set_chat({'text': input_result, 'type': 'I'})
                 output_result = self.eval(input_result)
 
                 print(self.analyzer.get_tagged())
                 if output_result is None:
                     output_result = "you said: {}".format(input_result)
-                    self.db.set({'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
+                    self.db.set_chat({'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
                 self.io.response(output_result)
         print(self.db.get())
         p.terminate()
