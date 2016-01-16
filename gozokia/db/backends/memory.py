@@ -14,5 +14,10 @@ class Database():
         return self.__records
 
     def set(self, *args, **kwargs):
-        # print(args)
-        self.__records.update(args[0])
+        collection = [k for k in args[0].keys()][0]
+        record = [k for k in args[0].values()][0]
+        try:
+            self.__records[collection].append(record)
+        except KeyError:
+            self.__records.update({collection: []})
+            self.__records[collection].append(record)

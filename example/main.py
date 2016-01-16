@@ -2,7 +2,6 @@
 # encoding: utf-8
 import os
 import sys
-# from pymongo import MongoClient
 sys.path.insert(0, os.getcwd())
 from gozokia import Gozokia
 from gozokia.core.rules import RuleBase
@@ -13,7 +12,6 @@ os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
 
 # Initialize
 goz = Gozokia()
-# client = MongoClient("mongodb://192.168.100.7:27019")
 
 # Register our class rules
 goz.rule(type=goz.OBJETIVE_COND, rank=2)(MyClassObjetive)

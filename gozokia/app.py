@@ -1,13 +1,14 @@
 # encoding: utf-8
 import os
+import datetime
+import time
+import multiprocessing
+
 from gozokia.i_o import Io
 from gozokia.conf import settings
 from gozokia.core import Rules
 from gozokia.core.text_processor import Analyzer
 from gozokia.db.base import ModelBase
-
-import time
-import multiprocessing
 
 
 def start_led():
@@ -101,7 +102,7 @@ class Gozokia:
             response = "you said: {}".format(sentence)
             rule = 'Gozokia'
 
-        self.db.set_chat({'text': response, 'type': 'O', 'rule': rule})
+        self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': response, 'type': 'O', 'rule': str(rule)})
         return response
 
     def console(self):
@@ -111,15 +112,15 @@ class Gozokia:
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:
-                self.db.set_chat({'text': input_result, 'type': 'I'})
+                self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': input_result, 'type': 'I'})
                 output_result = self.eval(input_result)
 
                 print(self.analyzer.get_tagged())
                 if output_result is None:
                     output_result = "you said: {}".format(input_result)
-                    self.db.set_chat({'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
+                    self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
                 self.io.response(output_result)
-        print(self.db.get())
+        print(self.db.get('chat'))
         p.terminate()
 
 
