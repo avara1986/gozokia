@@ -80,8 +80,8 @@ class Rules(object):
                 if self.get_active_rule(self.__RULE_KEY_CLASS).reload_rule() is False:
                     self.pop(self.get_active_rule())
                 self.set_active_rule(None)
-
-        if not self.exist_active_rule():
+                self.get_rule(gozokia=gozokia, sentence=sentence)
+        else:
             for r in self.get_objetives():
                 if r['class'].condition(gozokia=gozokia, sentence=sentence):
                     self.set_active_rule(r)

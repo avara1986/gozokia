@@ -97,9 +97,12 @@ class Gozokia:
         if rule is not None:
             rule_object = rule["class"]
             response = rule_object.response()
-            self.db.set_chat({'text': response, 'type': 'O', 'rule': rule})
-            return response
-        return None
+        else:
+            response = "you said: {}".format(sentence)
+            rule = 'Gozokia'
+
+        self.db.set_chat({'text': response, 'type': 'O', 'rule': rule})
+        return response
 
     def console(self):
         input_result = True
