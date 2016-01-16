@@ -120,7 +120,7 @@ class Gozokia:
                     output_result = "you said: {}".format(input_result)
                     self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
                 self.io.response(output_result)
-        print(self.db.get('chat'))
+        print(self.db.get())
         p.terminate()
 
 

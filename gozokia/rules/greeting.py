@@ -8,6 +8,8 @@ class Greeting(RuleBase):
               ]
     __SELECTED_OPTION = None
 
+    name = ""
+
     def __init__(self):
         self.set_reload(False)
 
@@ -20,20 +22,23 @@ class Greeting(RuleBase):
         # print("Reload Rule: {}".format(self.reload))
         self.gozokia = kwargs.get('gozokia')
         self.sentence = kwargs.get('sentence')
-        if self.gozokia.db.get('users') is False:
-            if len(self.sentence) == 1 and self.sentence[0][1] == "NN":
-                name = " ".join(name for name, syntax in self.sentence)
-            else:
-                name = " ".join(name for name, syntax in filter(lambda x: x[1] == 'NNP', self.sentence))
-            if len(name):
-                self.gozokia.db.set({'users': {'name': name}})
-
+        if len(self.sentence) == 1 and self.sentence[0][1] == "NN":
+            self.name = " ".join(name for name, syntax in self.sentence)
+        else:
+            self.name = " ".join(name for name, syntax in filter(lambda x: x[1] == 'NNP', self.sentence))
+        if len(self.gozokia.db.get('people')) == 0:
+                users = self.gozokia.db.get('people', {'name': self.name})
+                if len(users) == 0:
+                    self.gozokia.db.set({'people': {'name': self.name}})
+                if len(users) == 1:
+                    pass
         return self.completed
 
     def response(self, *args, **kwargs):
-        if self.gozokia.db.get('users') is False:
+        if len(self.gozokia.db.get('people')) == 0:
             return "Hi, who are you?"
         else:
-            self.completed = True
-            return "Nice to meet you, {} :)".format(self.gozokia.db.get('users')[0]['name'])
-
+            if len(self.gozokia.db.get('people')) == 1:
+                self.completed = True
+                return "Hi, {} :)".format(self.gozokia.db.get('people')[0]['name'])
+        return None

@@ -19,8 +19,8 @@ class ModelBase(object):
     def get_db(self):
         return self.db
 
-    def get(self, key=None):
-        return self.db.get(key)
+    def get(self, key=None, search=None):
+        return self.db.get(key, search)
 
     def set_chat(self, chat):
         self.db.set({'chat': chat})

@@ -13,9 +13,9 @@ class Database():
         self.db = self.client[settings.DATABASES['default']['NAME']]
         pass
 
-    def get(self, key=None):
+    def get(self, key=None, search=None):
         if key is not None:
-            return [c for c in self.db[key].find()]
+            return [c for c in self.db[key].find(search)]
 
     def set(self, *args, **kwargs):
         collection = [k for k in args[0].keys()][0]
