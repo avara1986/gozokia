@@ -8,18 +8,14 @@ class Greeting(RuleBase):
               ]
     __SELECTED_OPTION = None
 
-    name = ""
-
     def __init__(self):
         self.set_reload(False)
 
     def condition(self, *args, **kwargs):
-        self.gozokia = kwargs.get('gozokia')
-        self.sentence = kwargs.get('sentence')
+        super(Greeting, self).condition(*args, **kwargs)
         return True
 
     def is_completed(self, *args, **kwargs):
-        # print("Reload Rule: {}".format(self.reload))
         self.gozokia = kwargs.get('gozokia')
         self.sentence = kwargs.get('sentence')
         if len(self.sentence) == 1 and self.sentence[0][1] == "NN":

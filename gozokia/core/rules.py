@@ -5,8 +5,12 @@ class RuleBase(object):
     completed = False
     reload = True
 
+    def __init__(self):
+        self.set_reload(False)
+
     def condition(self, *args, **kwargs):
-        return NotImplemented
+        self.gozokia = kwargs.get('gozokia')
+        self.sentence = kwargs.get('sentence')
 
     def response(self, *args, **kwargs):
         return NotImplemented
