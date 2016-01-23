@@ -6,7 +6,6 @@ sys.path.insert(0, os.getcwd())
 from gozokia import Gozokia
 from gozokia.core.rules import RuleBase
 from example.my_class import MyClassObjetive
-
 # First, declare our settings file:
 os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
 

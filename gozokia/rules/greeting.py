@@ -23,13 +23,13 @@ class Greeting(RuleBase):
         self.gozokia = kwargs.get('gozokia')
         self.sentence = kwargs.get('sentence')
         if len(self.sentence) == 1 and self.sentence[0][1] == "NN":
-            self.name = " ".join(name for name, syntax in self.sentence)
+            name = " ".join(name for name, syntax in self.sentence)
         else:
-            self.name = " ".join(name for name, syntax in filter(lambda x: x[1] == 'NNP', self.sentence))
+            name = " ".join(name for name, syntax in filter(lambda x: x[1] == 'NNP', self.sentence))
         if len(self.gozokia.db.get('people')) == 0:
-                users = self.gozokia.db.get('people', {'name': self.name})
+                users = self.gozokia.db.get('people', {'name': name})
                 if len(users) == 0:
-                    self.gozokia.db.set({'people': {'name': self.name}})
+                    self.gozokia.db.set({'people': {'name': name}})
                 if len(users) == 1:
                     pass
         return self.completed

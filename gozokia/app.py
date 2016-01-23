@@ -10,6 +10,8 @@ from gozokia.core import Rules
 from gozokia.core.text_processor import Analyzer
 from gozokia.db.base import ModelBase
 
+settings.configure()
+
 
 def start_led():
     '''

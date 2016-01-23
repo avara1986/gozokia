@@ -6,7 +6,7 @@ https://github.com/django/django/blob/master/django/conf/__init__.py
 
 import os
 import importlib
-
+from gozokia.conf import global_settings
 from gozokia.core.exceptions import ImproperlyConfigured
 from gozokia.utils.functional import LazyObject, empty
 
@@ -15,9 +15,9 @@ ENVIRONMENT_VARIABLE = "GOZOKIA_SETTINGS_MODULE"
 
 class LazySettings(LazyObject):
     """
-    A lazy proxy for either global Django settings or a custom settings object.
+    A lazy proxy for either global Gozokia settings or a custom settings object.
     The user can manually configure settings prior to using them. Otherwise,
-    Django uses the settings module pointed to by DJANGO_SETTINGS_MODULE.
+    Gozokia uses the settings module pointed to by GOZOKIA_SETTINGS_MODULE.
     """
     def _setup(self, name=None):
         """
@@ -48,6 +48,19 @@ class LazySettings(LazyObject):
         if self._wrapped is empty:
             self._setup(name)
         return getattr(self._wrapped, name)
+
+    def configure(self, default_settings=global_settings, **options):
+        """
+        Called to manually configure the settings. The 'default_settings'
+        parameter sets where to retrieve any unspecified values from (its
+        argument must support attribute access (__getattr__)).
+        """
+        if self._wrapped is not empty:
+            raise RuntimeError('Settings already configured.')
+        holder = UserSettingsHolder(default_settings)
+        for name, value in options.items():
+            setattr(holder, name, value)
+        self._wrapped = holder
 
     @property
     def configured(self):
@@ -98,6 +111,51 @@ class Settings(BaseSettings):
         return '<%(cls)s "%(settings_module)s">' % {
             'cls': self.__class__.__name__,
             'settings_module': self.SETTINGS_MODULE,
+        }
+
+
+class UserSettingsHolder(BaseSettings):
+    """
+    Holder for user configured settings.
+    """
+    # SETTINGS_MODULE doesn't make much sense in the manually configured
+    # (standalone) case.
+    SETTINGS_MODULE = None
+
+    def __init__(self, default_settings):
+        """
+        Requests for configuration variables not in this class are satisfied
+        from the module specified in default_settings (if possible).
+        """
+        self.__dict__['_deleted'] = set()
+        self.default_settings = default_settings
+
+    def __getattr__(self, name):
+        if name in self._deleted:
+            raise AttributeError
+        return getattr(self.default_settings, name)
+
+    def __setattr__(self, name, value):
+        self._deleted.discard(name)
+        super(UserSettingsHolder, self).__setattr__(name, value)
+
+    def __delattr__(self, name):
+        self._deleted.add(name)
+        if hasattr(self, name):
+            super(UserSettingsHolder, self).__delattr__(name)
+
+    def __dir__(self):
+        return list(self.__dict__) + dir(self.default_settings)
+
+    def is_overridden(self, setting):
+        deleted = (setting in self._deleted)
+        set_locally = (setting in self.__dict__)
+        set_on_default = getattr(self.default_settings, 'is_overridden', lambda s: False)(setting)
+        return (deleted or set_locally or set_on_default)
+
+    def __repr__(self):
+        return '<%(cls)s>' % {
+            'cls': self.__class__.__name__,
         }
 
 settings = LazySettings()
