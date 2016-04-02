@@ -1,10 +1,12 @@
+from gozokia.conf import settings
 from gozokia.core.rules import RuleBase
 
 
 class Debug(RuleBase):
     __OPTIONS = [
               'list_rules',
-              'active_rule'
+              'active_rule',
+              'list_settings',
               ]
     __SELECTED_OPTION = None
 
@@ -16,11 +18,15 @@ class Debug(RuleBase):
         super(Debug, self).condition(*args, **kwargs)
         cond_list = ('show', 'VB'), ('me', 'PRP'), ('your', 'PRP$'), ('rules', 'NNS')
         cond_active = ('show', 'VB'), ('me', 'PRP'), ('the', 'DT'), ('active', 'JJ'), ('rule', 'NN')
+        cond_settings = ('show', 'VB'), ('me', 'PRP'), ('the', 'DT'), ('settings', 'NNS')
         if len([True for t in self.sentence if t in cond_list]) == len(cond_list):
             self.__SELECTED_OPTION = 0
             return True
         if len([True for t in self.sentence if t in cond_active]) == len(cond_active):
             self.__SELECTED_OPTION = 1
+            return True
+        if len([True for t in self.sentence if t in cond_settings]) == len(cond_settings):
+            self.__SELECTED_OPTION = 2
             return True
 
     def response(self, *args, **kwargs):
@@ -42,7 +48,11 @@ class Debug(RuleBase):
 
             elif self.__OPTIONS[self.__SELECTED_OPTION] == 'active_rule':
                 result = self.gozokia.rules.get_active_rule()
-
+            elif self.__OPTIONS[self.__SELECTED_OPTION] == 'list_settings':
+                result = ("***** Settings *****\n")
+                for setting in dir(settings):
+                    if setting.isupper():
+                        result += str(setting) + " = " + str(getattr(settings, setting)) + "\n"
             self.completed = True
 
         return result
