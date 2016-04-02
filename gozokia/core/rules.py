@@ -16,7 +16,8 @@ class RuleBase(object):
         return NotImplemented
 
     def is_completed(self, *args, **kwargs):
-        return self.completed
+        self.gozokia = kwargs.get('gozokia')
+        self.sentence = kwargs.get('sentence')
 
     def set_reload(self, reload):
         self.reload = reload
@@ -33,7 +34,7 @@ class RuleBase(object):
 
 
 class Rules(object):
-    __rules = []
+    __rules_qeue = []
 
     __rules_completed = []
 
@@ -60,13 +61,16 @@ class Rules(object):
         else:
             rule_name = str(rule_object)
 
-        self.__rules.append({'rule': rule_name, self.__RULE_KEY_CLASS: rule_object, 'rank': rank, 'type': type_rule})
+        self.__rules_qeue.append({'rule': rule_name, self.__RULE_KEY_CLASS: rule_object, 'rank': rank, 'type': type_rule})
 
     def get_rules(self, type_rule=None):
         f = lambda x: True
-        if type_rule == self._RAISE_COND or type_rule == self._OBJETIVE_COND:
+        if type_rule in [self._RAISE_COND, self._OBJETIVE_COND]:
             f = lambda x: x['type'] == type_rule and x[self.__RULE_KEY_CLASS].completed == False
-        return sorted(filter(f, self.__rules), key=itemgetter('rank'))
+        return sorted(filter(f, self.__rules_qeue), key=itemgetter('rank'))
+
+    def get_rules_completed(self):
+        return sorted(self.__rules_completed, key=itemgetter('rank'))
 
     def get_raises(self):
         for rule in self.get_rules(type_rule=self._RAISE_COND):
@@ -77,7 +81,9 @@ class Rules(object):
             yield rule
 
     def get_rule(self, gozokia, sentence):
-        # TODO:
+        """
+        Get the active rule or find one.
+        """
         if self.exist_active_rule():
             if self.get_active_rule(self.__RULE_KEY_CLASS).is_completed(gozokia=gozokia, sentence=sentence):
                 print("RULE {} is completed".format(self.get_active_rule(self.__RULE_KEY_CLASS)))
@@ -112,12 +118,12 @@ class Rules(object):
         return self.__active_rule is not None
 
     def pop(self, rule):
-        self.__rules = [r for r in self if r != rule]
+        self.__rules_qeue = [r for r in self if r != rule]
         self.__rules_completed.append(rule)
 
     def __getitem__(self, key):
-        if key in self.__rules:
-            return self.__rules[key]
+        if key in self.__rules_qeue:
+            return self.__rules_qeue[key]
         raise KeyError
 
     def __iter__(self):

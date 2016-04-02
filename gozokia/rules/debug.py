@@ -8,9 +8,12 @@ class Debug(RuleBase):
               ]
     __SELECTED_OPTION = None
 
+    def __init__(self, *args, **kwargs):
+        super(Debug, self).__init__(*args, **kwargs)
+        self.set_reload(True)
+
     def condition(self, *args, **kwargs):
-        self.gozokia = kwargs.get('gozokia')
-        self.sentence = kwargs.get('sentence')
+        super(Debug, self).condition(*args, **kwargs)
         cond_list = ('show', 'VB'), ('me', 'PRP'), ('your', 'PRP$'), ('rules', 'NNS')
         cond_active = ('show', 'VB'), ('me', 'PRP'), ('the', 'DT'), ('active', 'JJ'), ('rule', 'NN')
         if len([True for t in self.sentence if t in cond_list]) == len(cond_list):
@@ -21,6 +24,7 @@ class Debug(RuleBase):
             return True
 
     def response(self, *args, **kwargs):
+        super(Debug, self).response(*args, **kwargs)
         if self.__SELECTED_OPTION is not None:
             if self.__OPTIONS[self.__SELECTED_OPTION] == 'list_rules':
                 result = ("***** Activated rules *****\n")
@@ -31,6 +35,9 @@ class Debug(RuleBase):
                     result += str(rule) + "\n"
                 result += ("***** Activated objectives *****\n")
                 for rule in self.gozokia.rules.get_objetives():
+                    result += str(rule) + "\n"
+                result += ("***** Completed rules *****\n")
+                for rule in self.gozokia.rules.get_rules_completed():
                     result += str(rule) + "\n"
 
             elif self.__OPTIONS[self.__SELECTED_OPTION] == 'active_rule':
