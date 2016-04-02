@@ -1,7 +1,7 @@
 '''
 Gozokia settings
 based on Django settings module:
-https://github.com/django/django/blob/master/django/conf/__init__.py
+c
 '''
 
 import os
@@ -82,6 +82,10 @@ class BaseSettings(object):
 
 class Settings(BaseSettings):
     def __init__(self, settings_module):
+        # update this dict from global settings (but only for ALL_CAPS settings)
+        for setting in dir(global_settings):
+            if setting.isupper():
+                setattr(self, setting, getattr(global_settings, setting))
         # store the settings module in case someone later cares
         self.SETTINGS_MODULE = settings_module
 

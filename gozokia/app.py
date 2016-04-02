@@ -10,13 +10,13 @@ from gozokia.core import Rules
 from gozokia.core.text_processor import Analyzer
 from gozokia.db.base import ModelBase
 
-settings.configure()
+# settings.configure()
 
 
 def start_led():
-    '''
+    """
     if the console is running on a RaspberryPi, run a led
-    '''
+    """
     try:
         import RPi.GPIO as GPIO
     except ImportError:
@@ -39,26 +39,26 @@ def start_led():
 
 
 class Gozokia:
-    '''
+    """
     Dictionary of rules
-    '''
+    """
     rules = Rules()
-    '''
+    """
     Text analyzer controller
-    '''
+    """
     analyzer = None
-    '''
+    """
     Input/Output controller
-    '''
+    """
     io = None
-    '''
+    """
     GOZOKIA_DIR: The directory where gozokia have been calling.
-    '''
+    """
     GOZOKIA_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    '''
+    """
     PROJECT_DIR: The directory where the project is running.
-    '''
+    """
     PROJECT_DIR = os.getcwd()
 
     RAISE_COND = 1
