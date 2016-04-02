@@ -1,9 +1,11 @@
 import os
 import speech_recognition as sr
-import urllib.request
-import urllib.parse
 import subprocess
+from gtts import gTTS
+
+from gozokia.conf import settings
 from gozokia.i_o.exceptions import GozokiaIoError
+
 r = sr.Recognizer()
 m = sr.Microphone()
 
@@ -57,35 +59,22 @@ class VoiceResponseMixin(object):
         return text[0:limit]
 
     def response_speak(self, text, language):
+        """
+        """
         fname = 'r.mp3'
         text = self._set_ouput_limit(text)
         """
         Sends text to Google's text to speech service
         and returns created speech (wav file). "
         """
-        url = "http://translate.google.com/translate_tts"
-        # data = "?q=%s&textlen=%d&tl=%s&client=%s" % (text, len(text), language, "t")
-        data = urllib.parse.urlencode({'key': os.environ.get('GOOGLE_TRANSLATE_KEY'),
-                                       "q": text,
-                                       "textlen": len(text),
-                                       "tl": language,
-                                       "client": "t"})
-        url = url + "?" + data
-        headers = {}
-        headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
-        # TODO catch exceptions
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            p = urllib.request.urlopen(req)
-        except Exception as e:
-            raise GozokiaIoError(__class__.__name__ + ": Error on voice: {}".format(str(e)))
-        f = open(fname, 'wb')
-        f.write(p.read())
-        f.close()
-        self.__play_mp3('r.mp3')
+        tts = gTTS(text=text, lang='en')
+        tts.save(fname)
+        self.__play_mp3(fname)
 
     def __play_mp3(self, path):
-        if os.environ.get('GOZOKIA_AUDIO_PLAYER') == 'mpg123':
+        if not os.path.isfile(path):
+            raise GozokiaIoError(__class__.__name__ + ": {} not exist".format(path))
+        if settings.GOZOKIA_AUDIO_PLAYER == 'mpg123':
             subprocess.Popen(['mpg123', '-q', path]).wait()
         else:
             raise GozokiaIoError(__class__.__name__ + ": No sound player selected")

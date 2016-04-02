@@ -30,4 +30,5 @@ class OutputTerminalVoice(OutputBase, VoiceResponseMixin):
         if 'response' not in kwargs:
             raise GozokiaOutputError('Response not send')
         self.response_speak(kwargs.get('response', ""), language=language)
+        print("- Gozokia: ", kwargs.get('response', ""))
         return True
