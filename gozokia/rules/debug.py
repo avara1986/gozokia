@@ -3,19 +3,18 @@ from gozokia.core.rules import RuleBase
 
 
 class Debug(RuleBase):
-    __OPTIONS = [
-              'list_rules',
-              'active_rule',
-              'list_settings',
-              ]
+    __OPTIONS = ['list_rules',
+                 'active_rule',
+                 'list_settings',
+                 ]
     __SELECTED_OPTION = None
 
     def __init__(self, *args, **kwargs):
         super(Debug, self).__init__(*args, **kwargs)
         self.set_reload(True)
 
-    def condition(self, *args, **kwargs):
-        super(Debug, self).condition(*args, **kwargs)
+    def condition_raise(self, *args, **kwargs):
+        super(Debug, self).condition_raise(*args, **kwargs)
         self.sentence = self.analyzer.get_tagged()
         cond_list = ('show', 'VB'), ('me', 'PRP'), ('your', 'PRP$'), ('rules', 'NNS')
         cond_active = ('show', 'VB'), ('me', 'PRP'), ('the', 'DT'), ('active', 'JJ'), ('rule', 'NN')
@@ -30,32 +29,32 @@ class Debug(RuleBase):
             self.__SELECTED_OPTION = 2
             return True
 
+    def condition_completed(self, *args, **kwargs):
+        self.set_completed()
+
     def response(self, *args, **kwargs):
-        super(Debug, self).response(*args, **kwargs)
-        self.sentence = self.analyzer.get_tagged()
+        self.response_output = "Here is the debug response"
+
         if self.__SELECTED_OPTION is not None:
             if self.__OPTIONS[self.__SELECTED_OPTION] == 'list_rules':
-                result = ("***** Activated rules *****\n")
+                self.print_output = ("***** Activated rules *****\n")
                 for rule in self.gozokia.rules:
-                    result += str(rule) + "\n"
-                result += ("***** Activated raises *****\n")
+                    self.print_output += str(rule) + "\n"
+                self.print_output += ("***** Activated raises *****\n")
                 for rule in self.gozokia.rules.get_raises():
-                    result += str(rule) + "\n"
-                result += ("***** Activated objectives *****\n")
+                    self.print_output += str(rule) + "\n"
+                self.print_output += ("***** Activated objectives *****\n")
                 for rule in self.gozokia.rules.get_objetives():
-                    result += str(rule) + "\n"
-                result += ("***** Completed rules *****\n")
+                    self.print_output += str(rule) + "\n"
+                self.print_output += ("***** Completed rules *****\n")
                 for rule in self.gozokia.rules.get_rules_completed():
-                    result += str(rule) + "\n"
+                    self.print_output += str(rule) + "\n"
 
             elif self.__OPTIONS[self.__SELECTED_OPTION] == 'active_rule':
-                result = self.gozokia.rules.get_active_rule()
+                self.print_output = self.gozokia.rules.get_active_rule()
             elif self.__OPTIONS[self.__SELECTED_OPTION] == 'list_settings':
-                result = ("***** Settings *****\n")
+                self.print_output = ("***** Settings *****\n")
                 for setting in dir(settings):
                     if setting.isupper():
-                        result += str(setting) + " = " + str(getattr(settings, setting)) + "\n"
-            self.completed = True
-
-        return result
+                        self.print_output += str(setting) + " = " + str(getattr(settings, setting)) + "\n"
 

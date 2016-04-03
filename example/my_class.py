@@ -3,8 +3,8 @@ from gozokia.core.rules import RuleBase
 
 class MyClassObjetive(RuleBase):
 
-    def condition(self, *args, **kwargs):
+    def condition_raise(self, *args, **kwargs):
         return False
 
     def response(self, *args, **kwargs):
-        return ('My Class Objetive')
+        self.response_output = 'My Class Objetive'

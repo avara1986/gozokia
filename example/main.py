@@ -19,11 +19,11 @@ goz.rule(type=goz.OBJETIVE_COND, rank=2)(MyClassObjetive)
 # Register our class rules
 @goz.rule(type=goz.RAISE_COND, rank=3)
 class MyClass2(RuleBase):
-    def condition(self, *args, **kwargs):
+    def condition_raise(self, *args, **kwargs):
         return False
 
     def response(self, *args, **kwargs):
-        return ('My Class2')
+        self.response_output = 'My Class2'
 
 # Run Gozokia console
 if __name__ == '__main__':

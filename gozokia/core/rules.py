@@ -1,23 +1,37 @@
+# encoding: utf-8
+"""
+Rules system.
+All rules inherit from RuleBase. All rules needs a condition, a response
+"""
 from operator import itemgetter
 
 
 class RuleBase(object):
     completed = False
     reload = True
+    response_output = ""
+    print_output = ""
 
     def __init__(self):
         self.set_reload(False)
 
-    def condition(self, *args, **kwargs):
+    def condition_raise(self, *args, **kwargs):
+        self.gozokia = kwargs.get('gozokia')
+        self.analyzer = kwargs.get('analyzer')
+
+    def condition_completed(self, *args, **kwargs):
         self.gozokia = kwargs.get('gozokia')
         self.analyzer = kwargs.get('analyzer')
 
     def response(self, *args, **kwargs):
-        return NotImplemented
+        raise NotImplementedError(__class__.__name__ + ": response not defined")
+
+    def get_response(self, *args, **kwargs):
+        self.response(*args, **kwargs)
+        return self.response_output, self.print_output
 
     def is_completed(self, *args, **kwargs):
-        self.gozokia = kwargs.get('gozokia')
-        self.analyzer = kwargs.get('analyzer')
+        return self.completed
 
     def set_completed(self):
         self.completed = True
@@ -27,7 +41,7 @@ class RuleBase(object):
 
     def reload_rule(self):
         if self.reload:
-            self.completed = False
+            self.set_completed()
             return True
         else:
             return False
@@ -83,18 +97,28 @@ class Rules(object):
         for rule in self.get_rules(type_rule=self._OBJETIVE_COND):
             yield rule
 
-    def get_rule(self, gozokia, analyzer):
+    def get_rule(self, gozokia):
         """
         Get the active rule or find one.
         """
         if self.exist_active_rule():
-            if self.get_active_rule(self.__RULE_KEY_CLASS).is_completed(gozokia=gozokia, analyzer=analyzer):
-                print("RULE {} is completed".format(self.get_active_rule(self.__RULE_KEY_CLASS)))
-                if self.get_active_rule(self.__RULE_KEY_CLASS).reload_rule() is False:
+            active_rule_object = self.get_active_rule(self.__RULE_KEY_CLASS)
+
+            active_rule_object.condition_completed(gozokia=gozokia, analyzer=gozokia.analyzer)
+            if active_rule_object.is_completed():
+                print("RULE {} end".format(active_rule_object))
+                if active_rule_object.reload_rule() is False:
                     self.pop(self.get_active_rule())
                 self.set_active_rule(None)
-                self.get_rule(gozokia=gozokia, analyzer=analyzer)
+                self.get_rule(gozokia=gozokia)
         else:
+            for r in self:
+                if r['class'].condition_raise(gozokia=gozokia, analyzer=gozokia.analyzer):
+                    print("RULE {} start".format(r['class']))
+                    self.set_active_rule(r)
+                    break
+            """
+            TODO: Check if is needed split rules in objetives and raises
             for r in self.get_objetives():
                 if r['class'].condition(gozokia=gozokia, analyzer=analyzer):
                     self.set_active_rule(r)
@@ -104,7 +128,7 @@ class Rules(object):
                     if r['class'].condition(gozokia=gozokia, analyzer=analyzer):
                         self.set_active_rule(r)
                         break
-
+            """
         return self.__active_rule
 
     def set_active_rule(self, rule=None):

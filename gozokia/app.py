@@ -13,6 +13,8 @@ from gozokia.db.base import ModelBase
 
 # settings.configure()
 
+#https://github.com/nltk/nltk/blob/develop/nltk/chat/util.py
+#chat = nltk.chat.util.Chat([(r'I like (.*)', ['Why do you like %1', 'Did you ever dislike %1']),], reflections)
 
 def start_led():
     """
@@ -107,19 +109,29 @@ class Gozokia:
         return False, rule
 
     def eval(self, sentence):
+        response_output = None
+        print_output = None
         self.sentence = sentence
         self.analyzer.set(sentence)
-        response, rule = self.check_system_rules()
-        if not response:
-            rule = self.rules.get_rule(self, self.analyzer)
+
+        # Add the input to DDBB
+        self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': self.sentence, 'type': 'I'})
+
+        response_output, rule = self.check_system_rules()
+        if not response_output:
+            # Check rules:
+            rule = self.rules.get_rule(self)
             if rule is not None:
                 rule_object = rule["class"]
-                response = rule_object.response()
+                response_output, print_output = rule_object.get_response()
             else:
-                response = "you said: {}".format(sentence)
+                response_output = "No rules. you said: {}".format(sentence)
                 rule = 'Gozokia'
-        self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': response, 'type': 'O', 'rule': str(rule)})
-        return response
+
+        # Add the output to DDBB
+        self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': response_output, 'type': 'O', 'rule': str(rule)})
+
+        return response_output, print_output
 
     def console(self):
         input_result = True
@@ -128,11 +140,17 @@ class Gozokia:
         while input_result is not False:
             input_result = self.io.listen()
             if input_result:
-                self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': input_result, 'type': 'I'})
-                output_result = self.eval(input_result)
-                print(self.analyzer.get_tagged())
+                output_result, print_output = self.eval(input_result)
+
+                if settings.DEBUG is True:
+                    print(self.analyzer.get_tagged())
+
                 self.io.response(output_result)
-        print(self.db.get())
+                if print_output:
+                    print(print_output)
+
+        if settings.DEBUG is True:
+            print(self.db.get())
         p.terminate()
 
 
