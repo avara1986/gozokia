@@ -25,8 +25,28 @@ sudo apt-get install python3-dev
 sudo apt-get install portaudio19-dev
 ```
 
+Rename settings.example.py as settings.py
+
+Example of console script:
+```
+os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
+
+goz = Gozokia()
+goz.initialize()
+goz.console()
+```
+
+Run console gozokia
+-------------------
+```
+python -m gozokia
+```
+
+
 Run examples
--------
+------------
+If you clone the git repo, you can run the examples:
+
 ```
 #!bash
 ./example/main.py
