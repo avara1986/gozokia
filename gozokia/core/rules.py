@@ -19,6 +19,9 @@ class RuleBase(object):
         self.gozokia = kwargs.get('gozokia')
         self.analyzer = kwargs.get('analyzer')
 
+    def set_completed(self):
+        self.completed = True
+
     def set_reload(self, reload):
         self.reload = reload
 

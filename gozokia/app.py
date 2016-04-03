@@ -3,6 +3,7 @@ import os
 import datetime
 import time
 import multiprocessing
+import re
 
 from gozokia.i_o import Io
 from gozokia.conf import settings
@@ -93,16 +94,30 @@ class Gozokia:
     def __add_rule(self, rule_class, **options):
         self.rules.add(rule_class, **options)
 
-    def eval(self, sentence):
-        self.analyzer.set(sentence)
-        rule = self.rules.get_rule(self, self.analyzer)
-        if rule is not None:
-            rule_object = rule["class"]
-            response = rule_object.response()
-        else:
-            response = "you said: {}".format(sentence)
-            rule = 'Gozokia'
+    def check_system_rules(self):
+        rule = "Gozokia"
+        sentence = self.sentence.lower()
+        if sentence.startswith('gozokia'):
+            if re.search("stop rule", sentence):
+                rule = self.rules.get_active_rule()
+                if rule is not None:
+                    rule["class"].set_completed()
+                    self.rules.set_active_rule(None)
+                    return "Stoped {}".format(str(rule['rule'])), rule
+        return False, rule
 
+    def eval(self, sentence):
+        self.sentence = sentence
+        self.analyzer.set(sentence)
+        response, rule = self.check_system_rules()
+        if not response:
+            rule = self.rules.get_rule(self, self.analyzer)
+            if rule is not None:
+                rule_object = rule["class"]
+                response = rule_object.response()
+            else:
+                response = "you said: {}".format(sentence)
+                rule = 'Gozokia'
         self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': response, 'type': 'O', 'rule': str(rule)})
         return response
 
