@@ -18,6 +18,8 @@ class Greeting(RuleBase):
     def condition_completed(self, *args, **kwargs):
         super(Greeting, self).condition_completed(*args, **kwargs)
         self.sentence = self.analyzer.get_tagged()
+
+        # TODO: this is an aval example very very simple. Refactored
         if len(self.sentence) == 1 and self.sentence[0][1] == "NN":
             name = " ".join(name for name, syntax in self.sentence)
         else:

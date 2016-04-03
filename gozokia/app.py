@@ -106,9 +106,21 @@ class Gozokia:
                     rule["class"].set_completed()
                     self.rules.set_active_rule(None)
                     return "Stoped {}".format(str(rule['rule'])), rule
+            elif re.search("thanks|thank you", sentence):
+                return "Your welcome", rule
+            elif re.search("bye|exit|shutdown", sentence):
+                return "Bye", rule
         return False, rule
 
     def eval(self, sentence):
+        """
+        Params:
+        sentence: sting
+
+        return:
+        response_output: string. the response to send to the IO output
+        print_output: string. The response to print, no parsed on IO output
+        """
         response_output = None
         print_output = None
         self.sentence = sentence
@@ -133,24 +145,26 @@ class Gozokia:
 
         return response_output, print_output
 
-    def console(self):
-        input_result = True
-        p = multiprocessing.Process(target=start_led)
-        p.start()
-        while input_result is not False:
-            input_result = self.io.listen()
-            if input_result:
-                output_result, print_output = self.eval(input_result)
-
-                if settings.DEBUG is True:
-                    print(self.analyzer.get_tagged())
-
-                self.io.response(output_result)
-                if print_output:
-                    print(print_output)
+    def get_response(self, input_result):
+        output_result, print_output = self.eval(input_result)
 
         if settings.DEBUG is True:
+            print(self.analyzer.get_tagged())
+
+        self.io.response(output_result)
+        if print_output:
+            print(print_output)
+        return output_result
+
+    def console(self):
+        output_result = True
+        p = multiprocessing.Process(target=start_led)
+        p.start()
+        while output_result != "Bye":
+            output_result = self.get_response(self.io.listen())
+        if settings.DEBUG:
             print(self.db.get())
         p.terminate()
 
-
+    def api(self, input_result):
+        return self.get_response(input_result)

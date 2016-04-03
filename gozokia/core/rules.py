@@ -98,6 +98,7 @@ class Rules(object):
             yield rule
 
     def get_rule(self, gozokia):
+        from gozokia.conf import settings
         """
         Get the active rule or find one.
         """
@@ -106,7 +107,8 @@ class Rules(object):
 
             active_rule_object.condition_completed(gozokia=gozokia, analyzer=gozokia.analyzer)
             if active_rule_object.is_completed():
-                print("RULE {} end".format(active_rule_object))
+                if settings.DEBUG:
+                    print("RULE {} end".format(active_rule_object))
                 if active_rule_object.reload_rule() is False:
                     self.pop(self.get_active_rule())
                 self.set_active_rule(None)
@@ -114,7 +116,8 @@ class Rules(object):
         else:
             for r in self:
                 if r['class'].condition_raise(gozokia=gozokia, analyzer=gozokia.analyzer):
-                    print("RULE {} start".format(r['class']))
+                    if settings.DEBUG:
+                        print("RULE {} start".format(r['class']))
                     self.set_active_rule(r)
                     break
             """

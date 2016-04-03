@@ -29,9 +29,4 @@ class MyClass2(RuleBase):
 if __name__ == '__main__':
     goz.initialize()
     print('\n*** Gozokia ***')
-    '''
-    # INPUT TYPE:
-    goz.set_io(input_type="value")
-    print(goz.io.listen(value="Hola hola!"))
-    '''
     goz.console()

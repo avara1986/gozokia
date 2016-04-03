@@ -53,10 +53,7 @@ class Io(object):
         return self._INPUT_SELECTED
 
     def listen(self, *args, **kwargs):
-        input_result = self.input.listen(*args, **kwargs)
-        if len(input_result) == 0:
-            input_result = False
-        return input_result
+        return self.input.listen(*args, **kwargs)
 
     '''
     Output configuration
