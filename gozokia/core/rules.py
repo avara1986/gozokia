@@ -10,14 +10,14 @@ class RuleBase(object):
 
     def condition(self, *args, **kwargs):
         self.gozokia = kwargs.get('gozokia')
-        self.sentence = kwargs.get('sentence')
+        self.analyzer = kwargs.get('analyzer')
 
     def response(self, *args, **kwargs):
         return NotImplemented
 
     def is_completed(self, *args, **kwargs):
         self.gozokia = kwargs.get('gozokia')
-        self.sentence = kwargs.get('sentence')
+        self.analyzer = kwargs.get('analyzer')
 
     def set_reload(self, reload):
         self.reload = reload
@@ -80,25 +80,25 @@ class Rules(object):
         for rule in self.get_rules(type_rule=self._OBJETIVE_COND):
             yield rule
 
-    def get_rule(self, gozokia, sentence):
+    def get_rule(self, gozokia, analyzer):
         """
         Get the active rule or find one.
         """
         if self.exist_active_rule():
-            if self.get_active_rule(self.__RULE_KEY_CLASS).is_completed(gozokia=gozokia, sentence=sentence):
+            if self.get_active_rule(self.__RULE_KEY_CLASS).is_completed(gozokia=gozokia, analyzer=analyzer):
                 print("RULE {} is completed".format(self.get_active_rule(self.__RULE_KEY_CLASS)))
                 if self.get_active_rule(self.__RULE_KEY_CLASS).reload_rule() is False:
                     self.pop(self.get_active_rule())
                 self.set_active_rule(None)
-                self.get_rule(gozokia=gozokia, sentence=sentence)
+                self.get_rule(gozokia=gozokia, analyzer=analyzer)
         else:
             for r in self.get_objetives():
-                if r['class'].condition(gozokia=gozokia, sentence=sentence):
+                if r['class'].condition(gozokia=gozokia, analyzer=analyzer):
                     self.set_active_rule(r)
                     break
             if not self.exist_active_rule():
                 for r in self.get_raises():
-                    if r['class'].condition(gozokia=gozokia, sentence=sentence):
+                    if r['class'].condition(gozokia=gozokia, analyzer=analyzer):
                         self.set_active_rule(r)
                         break
 

@@ -40,7 +40,7 @@ def start_led():
 
 class Gozokia:
     """
-    Dictionary of rules
+    Queue of rules
     """
     rules = Rules()
     """
@@ -95,8 +95,7 @@ class Gozokia:
 
     def eval(self, sentence):
         self.analyzer.set(sentence)
-        tags = self.analyzer.get_tagged()
-        rule = self.rules.get_rule(self, tags)
+        rule = self.rules.get_rule(self, self.analyzer)
         if rule is not None:
             rule_object = rule["class"]
             response = rule_object.response()
@@ -116,11 +115,7 @@ class Gozokia:
             if input_result:
                 self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': input_result, 'type': 'I'})
                 output_result = self.eval(input_result)
-
                 print(self.analyzer.get_tagged())
-                if output_result is None:
-                    output_result = "you said: {}".format(input_result)
-                    self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': output_result, 'type': 'O', 'rule': 'Gozokia'})
                 self.io.response(output_result)
         print(self.db.get())
         p.terminate()

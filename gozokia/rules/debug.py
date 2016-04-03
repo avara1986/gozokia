@@ -16,6 +16,7 @@ class Debug(RuleBase):
 
     def condition(self, *args, **kwargs):
         super(Debug, self).condition(*args, **kwargs)
+        self.sentence = self.analyzer.get_tagged()
         cond_list = ('show', 'VB'), ('me', 'PRP'), ('your', 'PRP$'), ('rules', 'NNS')
         cond_active = ('show', 'VB'), ('me', 'PRP'), ('the', 'DT'), ('active', 'JJ'), ('rule', 'NN')
         cond_settings = ('show', 'VB'), ('me', 'PRP'), ('the', 'DT'), ('settings', 'NNS')
@@ -31,6 +32,7 @@ class Debug(RuleBase):
 
     def response(self, *args, **kwargs):
         super(Debug, self).response(*args, **kwargs)
+        self.sentence = self.analyzer.get_tagged()
         if self.__SELECTED_OPTION is not None:
             if self.__OPTIONS[self.__SELECTED_OPTION] == 'list_rules':
                 result = ("***** Activated rules *****\n")

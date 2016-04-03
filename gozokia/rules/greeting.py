@@ -17,6 +17,7 @@ class Greeting(RuleBase):
 
     def is_completed(self, *args, **kwargs):
         super(Greeting, self).is_completed(*args, **kwargs)
+        self.sentence = self.analyzer.get_tagged()
         if len(self.sentence) == 1 and self.sentence[0][1] == "NN":
             name = " ".join(name for name, syntax in self.sentence)
         else:
