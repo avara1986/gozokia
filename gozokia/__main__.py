@@ -3,8 +3,6 @@ import sys
 import os
 from gozokia import Gozokia
 os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
-print('aaa Number of arguments:', len(sys.argv), 'arguments.')
-print('Argument List:', str(sys.argv))
 
 goz = Gozokia()
 goz.initialize()
