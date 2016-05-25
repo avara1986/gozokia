@@ -2,11 +2,6 @@ from gozokia.core.rules import RuleBase
 
 
 class Greeting(RuleBase):
-    __OPTIONS = [
-              'list_rules',
-              'active_rule'
-              ]
-    __SELECTED_OPTION = None
 
     def __init__(self):
         self.set_reload(False)

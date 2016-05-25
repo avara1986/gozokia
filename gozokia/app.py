@@ -9,12 +9,14 @@ from gozokia.i_o import Io
 from gozokia.conf import settings
 from gozokia.core import Rules
 from gozokia.core.text_processor import Analyzer
+from gozokia.utils.util_logging import Logging
 from gozokia.db.base import ModelBase
 
 # settings.configure()
 
-#https://github.com/nltk/nltk/blob/develop/nltk/chat/util.py
+# https://github.com/nltk/nltk/blob/develop/nltk/chat/util.py
 #chat = nltk.chat.util.Chat([(r'I like (.*)', ['Why do you like %1', 'Did you ever dislike %1']),], reflections)
+
 
 def start_led():
     """
@@ -71,15 +73,16 @@ class Gozokia:
     def __init__(self):
         pass
 
-    def initialize(self):
-        if settings.DEBUG is True:
-            print("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
-            print("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
+    def initialize(self, * args, **kwargs):
+        self.analyzer = Analyzer()
+        model = kwargs.get('port', False)
+        self.db = model if model else ModelBase()
+        self.logger = Logging(__name__)
+        self.logger.debug("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
+        self.logger.debug("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
         self.set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
                     output_type=settings.GOZOKIA_OUTPUT_TYPE,
                     )
-        self.analyzer = Analyzer()
-        self.db = ModelBase()
 
     def set_io(self, *args, **kwargs):
         self.io = Io(*args, **kwargs)
@@ -97,19 +100,23 @@ class Gozokia:
         self.rules.add(rule_class, **options)
 
     def check_system_rules(self):
+        """
+        System rules are the core rules. 
+        """
         rule = "Gozokia"
-        sentence = self.sentence.lower()
-        if sentence.startswith('gozokia'):
-            if re.search("stop rule", sentence):
-                rule = self.rules.get_active_rule()
-                if rule is not None:
-                    rule["class"].set_completed()
-                    self.rules.set_active_rule(None)
-                    return "Stoped {}".format(str(rule['rule'])), rule
-            elif re.search("thanks|thank you", sentence):
-                return "Your welcome", rule
-            elif re.search("bye|exit|shutdown", sentence):
-                return "Bye", rule
+        if self.sentence:
+            sentence = self.sentence.lower()
+            if sentence.startswith('gozokia'):
+                if re.search("stop rule", sentence):
+                    rule = self.rules.get_active_rule()
+                    if rule is not None:
+                        rule["class"].set_completed()
+                        self.rules.set_active_rule(None)
+                        return "Stoped {}".format(str(rule['rule'])), rule
+                elif re.search("thanks|thank you", sentence):
+                    return "Your welcome", rule
+                elif re.search("bye|exit|shutdown", sentence):
+                    return "Bye", rule
         return False, rule
 
     def eval(self, sentence):
@@ -127,7 +134,7 @@ class Gozokia:
         self.analyzer.set(sentence)
 
         # Add the input to DDBB
-        self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': self.sentence, 'type': 'I'})
+        self.db.set_chat(chat={'timestamp': datetime.datetime.now(), 'text': self.sentence, 'type': 'I'})
 
         response_output, rule = self.check_system_rules()
         if not response_output:
@@ -141,19 +148,25 @@ class Gozokia:
                 rule = 'Gozokia'
 
         # Add the output to DDBB
-        self.db.set_chat({'timestamp': datetime.datetime.now(), 'text': response_output, 'type': 'O', 'rule': str(rule)})
+        self.db.set_chat(chat={'timestamp': datetime.datetime.now(), 'text': response_output, 'type': 'O', 'rule': str(rule)})
 
         return response_output, print_output
 
     def get_response(self, input_result):
-        output_result, print_output = self.eval(input_result)
+        """
 
-        if settings.DEBUG is True:
-            print(self.analyzer.get_tagged())
+        """
+        output_result = ""
+        print_output = ""
 
-        self.io.response(output_result)
+        if input_result:
+            output_result, print_output = self.eval(input_result)
+            self.logger.debug(self.analyzer.get_tagged())
+            self.io.response(output_result)
         if print_output:
-            print(print_output)
+            self.logger.debug(print_output)
+
+        # TODO: Parse the output
         return output_result
 
     def console(self):
@@ -163,7 +176,7 @@ class Gozokia:
         while output_result != "Bye":
             output_result = self.get_response(self.io.listen())
         if settings.DEBUG:
-            print(self.db.get())
+            self.logger.debug(self.db.get())
         p.terminate()
 
     def api(self, input_result):

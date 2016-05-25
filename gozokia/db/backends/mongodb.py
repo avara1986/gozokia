@@ -7,9 +7,9 @@ class Database():
 
     def __init__(self):
         self.client = MongoClient("mongodb://{}:{}".format(
-                                 settings.DATABASES['default']['HOST'],
-                                 settings.DATABASES['default']['PORT'],
-                                 ))
+            settings.DATABASES['default']['HOST'],
+            settings.DATABASES['default']['PORT'],
+        ))
         self.db = self.client[settings.DATABASES['default']['NAME']]
         pass
 
@@ -22,4 +22,3 @@ class Database():
         record = [k for k in args[0].values()][0]
         documents = self.db[collection]
         document_id = documents.insert_one(record).inserted_id
-        print(document_id)

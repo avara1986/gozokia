@@ -11,7 +11,6 @@ class InputTerminalText(InputBase):
         """
         Normalize reading input between python 2 and 3.
         'raw_input' is just 'input' in python3
-        https://github.com/gunthercox/ChatterBot/blob/master/chatterbot/utils/read_input.py
         """
         if sys.version_info[0] < 3:
             input_text = str(raw_input("> "))
