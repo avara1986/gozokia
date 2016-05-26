@@ -74,12 +74,19 @@ class Gozokia:
         pass
 
     def initialize(self, * args, **kwargs):
+        # Set the text analyzer. Default nltk (http://www.nltk.org/)
         self.analyzer = Analyzer()
-        model = kwargs.get('port', False)
+
+        # Set the model. Default nltk (http://www.nltk.org/)
+        model = kwargs.get('model', False)
         self.db = model if model else ModelBase()
+
+        # Initialize the logger
         self.logger = Logging(__name__)
         self.logger.debug("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
         self.logger.debug("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
+
+        # Initialize the i/o methods. Default input text and output text
         self.set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
                     output_type=settings.GOZOKIA_OUTPUT_TYPE,
                     )

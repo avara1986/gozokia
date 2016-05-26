@@ -1,7 +1,11 @@
 import os
 import speech_recognition as sr
 import subprocess
-from gtts import gTTS
+
+try:
+    from gtts import gTTS
+except ImportError:
+    pass
 
 from gozokia.conf import settings
 from gozokia.i_o.exceptions import GozokiaIoError
