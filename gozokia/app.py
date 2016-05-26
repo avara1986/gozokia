@@ -169,12 +169,11 @@ class Gozokia:
         if input_result:
             output_result, print_output = self.eval(input_result)
             self.logger.debug(self.analyzer.get_tagged())
-            self.io.response(output_result)
-        if print_output:
-            self.logger.debug(print_output)
+            if print_output:
+                self.logger.debug(print_output)
+            return self.io.response(output_result)
 
-        # TODO: Parse the output
-        return output_result
+        return None
 
     def console(self):
         output_result = True
@@ -182,8 +181,8 @@ class Gozokia:
         p.start()
         while output_result != "Bye":
             output_result = self.get_response(self.io.listen())
-        if settings.DEBUG:
-            self.logger.debug(self.db.get())
+
+        self.logger.debug(self.db.get())
         p.terminate()
 
     def api(self, input_result):
