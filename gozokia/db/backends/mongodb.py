@@ -1,8 +1,9 @@
 from pymongo import MongoClient
 from gozokia.conf import settings
+from gozokia.db.base import ModelBase
 
 
-class Database():
+class Database(ModelBase):
     client = {}
 
     def __init__(self):
@@ -22,3 +23,6 @@ class Database():
         record = [k for k in args[0].values()][0]
         documents = self.db[collection]
         document_id = documents.insert_one(record).inserted_id
+
+    def set_chat(self, chat):
+        self.set({'chat': chat})

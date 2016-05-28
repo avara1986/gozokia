@@ -1,35 +1,33 @@
-'''
+# encoding: utf-8
+"""
 Gozokia model
-based on Django settings module:
-https://github.com/django/django/blob/master/django/conf/__init__.py
-'''
-import os
-import importlib
-from gozokia.conf import settings
+"""
+from __future__ import print_function
+
+from abc import ABCMeta, abstractmethod
 
 
-class ModelBase(object):
-    DEFAULT_ENGINE = 'gozokia.db.backends.memory'
+class ModelBase:
+    __metaclass__ = ABCMeta
     """
     Metaclass for all models.
     """
-
+    @abstractmethod
     def __init__(self, *args, **kwargs):
-        try:
-            mod = importlib.import_module(settings.DATABASES['default']['ENGINE'])
-            self.db = mod.Database()
-        except Exception:
-            mod = importlib.import_module(self.DEFAULT_ENGINE)
-            self.db = mod.Database()
+        pass
 
+    @abstractmethod
     def get_db(self):
-        return self.db
+        pass
 
+    @abstractmethod
     def get(self, key=None, search=None):
-        return self.db.get(key, search)
+        pass
 
+    @abstractmethod
     def set_chat(self, chat):
-        self.db.set({'chat': chat})
+        pass
 
+    @abstractmethod
     def set(self, *args, **kwargs):
-        return self.db.set(*args, **kwargs)
+        pass

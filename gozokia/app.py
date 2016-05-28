@@ -10,7 +10,7 @@ from gozokia.conf import settings
 from gozokia.core import Rules
 from gozokia.core.text_processor import Analyzer
 from gozokia.utils.util_logging import Logging
-from gozokia.db.base import ModelBase
+from gozokia.db import Model
 
 # settings.configure()
 
@@ -79,7 +79,7 @@ class Gozokia:
 
         # Set the model. Default nltk (http://www.nltk.org/)
         model = kwargs.get('model', False)
-        self.db = model if model else ModelBase()
+        self.db = model if model else Model()
 
         # Initialize the logger
         self.logger = Logging(__name__)
@@ -95,7 +95,7 @@ class Gozokia:
         self.io = Io(*args, **kwargs)
 
     def rule(self, **options):
-        """A decorator that is used to register a view function for a
+        """A decorator that is used to register a class for a
         given rule.
         """
         def decorator(rule_class):
@@ -118,7 +118,7 @@ class Gozokia:
                     rule = self.rules.get_active_rule()
                     if rule is not None:
                         rule["class"].set_completed()
-                        self.rules.set_active_rule(None)
+                        self.rules.stop_active_rule()
                         return "Stoped {}".format(str(rule['rule'])), rule
                 elif re.search("thanks|thank you", sentence):
                     return "Your welcome", rule
@@ -155,7 +155,10 @@ class Gozokia:
                 rule = 'Gozokia'
 
         # Add the output to DDBB
-        self.db.set_chat(chat={'timestamp': datetime.datetime.now(), 'text': response_output, 'type': 'O', 'rule': str(rule)})
+        print(rule)
+        self.db.set_chat(chat={'timestamp': datetime.datetime.now(),
+                               'text': response_output, 'type': 'O',
+                               'rule': rule['rule'], 'status': rule['status']})
 
         return response_output, print_output
 
@@ -176,6 +179,11 @@ class Gozokia:
         return None
 
     def console(self):
+        """
+        The api method's designed to run in console
+        method works with the settings:
+        GOZOKIA_INPUT_TYPE = "terminal_txt" or GOZOKIA_INPUT_TYPE = "terminal_voice"
+        """
         output_result = True
         p = multiprocessing.Process(target=start_led)
         p.start()
@@ -186,4 +194,9 @@ class Gozokia:
         p.terminate()
 
     def api(self, input_result):
-        return self.get_response(input_result)
+        """
+        The api method's designed to recive a value and parse. This
+        method works with the settings:
+        GOZOKIA_INPUT_TYPE = "value"
+        """
+        return self.get_response(self.io.listen(value=input_result))

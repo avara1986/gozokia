@@ -1,5 +1,7 @@
+from gozokia.db.base import ModelBase
 
-class Database():
+
+class Database(ModelBase):
     _records = {}
 
     def __init__(self):
@@ -25,3 +27,6 @@ class Database():
         except KeyError:
             self._records.update({collection: []})
             self._records[collection].append(record)
+
+    def set_chat(self, chat):
+        self.set({'chat': chat})
