@@ -57,6 +57,13 @@ class Rules(object):
 
     __active_rule = None
 
+    _STATUS_RULES_KEY = "status"
+    _STATUS_RULES = (0, 1, 2)
+
+    _STATUS_RULE_COMPLETED = 0
+    _STATUS_RULE_PENDING = 1
+    _STATUS_RULE_ACTIVE = 2
+
     _RAISE_COND = 1
 
     _OBJETIVE_COND = 2
@@ -78,7 +85,9 @@ class Rules(object):
         else:
             rule_name = str(rule_object)
 
-        self.__rules_qeue.append({'rule': rule_name, self.__RULE_KEY_CLASS: rule_object, 'rank': rank, 'type': type_rule})
+        self.__rules_qeue.append({'rule': rule_name, self.__RULE_KEY_CLASS: rule_object,
+                                  'rank': rank, 'type': type_rule,
+                                  self._STATUS_RULES_KEY: self._STATUS_RULE_PENDING})
 
     def get_rules(self, type_rule=None):
         f = lambda x: True
@@ -98,7 +107,6 @@ class Rules(object):
             yield rule
 
     def get_rule(self, gozokia):
-        from gozokia.conf import settings
         """
         Get the active rule or find one.
         """
@@ -107,8 +115,7 @@ class Rules(object):
 
             active_rule_object.condition_completed(gozokia=gozokia, analyzer=gozokia.analyzer)
             if active_rule_object.is_completed():
-                if settings.DEBUG:
-                    print("RULE {} end".format(active_rule_object))
+                gozokia.logger.debug("RULE {} end".format(active_rule_object))
                 if active_rule_object.reload_rule() is False:
                     self.pop(self.get_active_rule())
                 self.set_active_rule(None)
@@ -116,8 +123,7 @@ class Rules(object):
         else:
             for r in self:
                 if r['class'].condition_raise(gozokia=gozokia, analyzer=gozokia.analyzer):
-                    if settings.DEBUG:
-                        print("RULE {} start".format(r['class']))
+                    gozokia.logger.debug("RULE {} start".format(r['class']))
                     self.set_active_rule(r)
                     break
             """
@@ -134,7 +140,18 @@ class Rules(object):
             """
         return self.__active_rule
 
+    def set_rule_active(self, rule):
+        rule[self._STATUS_RULES_KEY] = self._STATUS_RULE_ACTIVE
+
+    def set_rule_pending(self, rule):
+        rule[self._STATUS_RULES_KEY] = self._STATUS_RULE_PENDING
+
+    def set_rule_completed(self, rule):
+        rule[self._STATUS_RULES_KEY] = self._STATUS_RULE_COMPLETED
+
     def set_active_rule(self, rule=None):
+        if rule:
+            self.set_rule_active(rule)
         self.__active_rule = rule
 
     def get_active_rule(self, key=None):
@@ -144,11 +161,16 @@ class Rules(object):
             rule = self.__active_rule[key]
         return rule
 
+    def stop_active_rule(self):
+        self.set_rule_pending(self.__active_rule)
+        self.set_active_rule(None)
+
     def exist_active_rule(self):
         return self.__active_rule is not None
 
     def pop(self, rule):
         self.__rules_qeue = [r for r in self if r != rule]
+        self.set_rule_completed(rule)
         self.__rules_completed.append(rule)
 
     def __getitem__(self, key):

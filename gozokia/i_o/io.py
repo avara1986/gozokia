@@ -34,6 +34,7 @@ class Io(object):
     '''
     Input configuration
     '''
+
     def set_input_method(self, input_type):
         try:
             self._INPUT_SELECTED = self._INPUT_METHODS[input_type]
@@ -58,6 +59,7 @@ class Io(object):
     '''
     Output configuration
     '''
+
     def set_output_method(self, output_type):
         try:
             self._OUTPUT_SELECTED = self._OUTPUT_METHODS[output_type]
