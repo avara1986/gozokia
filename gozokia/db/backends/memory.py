@@ -1,3 +1,5 @@
+import datetime
+
 from gozokia.db.base import ModelBase
 
 
@@ -28,5 +30,15 @@ class Database(ModelBase):
             self._records.update({collection: []})
             self._records[collection].append(record)
 
-    def set_chat(self, chat):
+    def set_chat(self, user, session, text, type_rule, rule, status):
+        chat = {'user': user, 'session': session, 'timestamp': datetime.datetime.now(),
+                'text': text, 'type_rule': type_rule,
+                'rule': rule, 'status': status}
         self.set({'chat': chat})
+
+    def get_chat(self, session, user=None):
+        chat_history = self.get()['chat']
+        if user:
+            return [chat for chat in chat_history if chat['user'] == user]
+        else:
+            return [chat for chat in chat_history if chat['session'] == session]

@@ -25,7 +25,11 @@ class ModelBase:
         pass
 
     @abstractmethod
-    def set_chat(self, chat):
+    def set_chat(self, user, session, text, type_rule, rule, status):
+        pass
+
+    @abstractmethod
+    def get_chat(self, session, user=None):
         pass
 
     @abstractmethod

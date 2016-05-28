@@ -1,37 +1,36 @@
 from gozokia.core.rules import RuleBase
 
 
-class Greeting(RuleBase):
+class GreetingObjetive(RuleBase):
 
     def __init__(self):
         self.set_reload(False)
 
     def condition_raise(self, *args, **kwargs):
-        super(Greeting, self).condition_raise(*args, **kwargs)
+        super(GreetingObjetive, self).condition_raise(*args, **kwargs)
         return True
 
     def condition_completed(self, *args, **kwargs):
-        super(Greeting, self).condition_completed(*args, **kwargs)
-        self.sentence = self.analyzer.get_tagged()
-
+        super(GreetingObjetive, self).condition_completed(*args, **kwargs)
         # TODO: this is an aval example very very simple. Refactored
-        if len(self.sentence) == 1 and self.sentence[0][1] == "NN":
-            name = " ".join(name for name, syntax in self.sentence)
-        else:
-            name = " ".join(name for name, syntax in filter(lambda x: x[1] == 'NNP', self.sentence))
-
-        if len(self.gozokia.db.get('people')) == 0 and len(self.gozokia.db.get('people', {'name': name})) == 0:
-            self.gozokia.db.set({'people': {'name': name}})
-        elif len(self.gozokia.db.get('people')) == 1:
-            self.set_completed()
+        sentence = self.sentence.lower()
+        if sentence.startswith('i am') or sentence.startswith("i'm") or sentence.startswith("im"):
+            self.name = sentence.split(" ")[-1]
 
     def response(self, *args, **kwargs):
-        if len(self.gozokia.db.get('people')) == 0:
+        try:
+            if self.name:
+                self.response_output = "Hi, {}".format(self.name)
+            else:
+                self.response_output = "No name"
+            self.set_completed()
+        except AttributeError:
             self.response_output = "Hi, who are you?"
-        else:
-            if len(self.gozokia.db.get('people')) == 1:
-                # self.set_completed()
-                self.response_output = "Hi, {}".format(self.gozokia.db.get('people')[0]['name'])
-            """
-            TODO: Check when the DDBB have more than 1 user
-            """
+
+
+class GreetingRaise(GreetingObjetive):
+
+    def condition_raise(self, *args, **kwargs):
+        super(GreetingRaise, self).condition_raise(*args, **kwargs)
+        if self.sentence.startswith('hi'):
+            return True

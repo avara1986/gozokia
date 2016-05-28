@@ -1,9 +1,11 @@
 # encoding: utf-8
-import os
 import datetime
-import time
+
 import multiprocessing
+import os
 import re
+import uuid
+import time
 
 from gozokia.i_o import Io
 from gozokia.conf import settings
@@ -47,7 +49,7 @@ class Gozokia:
     """
     Queue of rules
     """
-    rules = Rules()
+    rules = None
     """
     Text analyzer controller
     """
@@ -70,8 +72,20 @@ class Gozokia:
 
     OBJETIVE_COND = 2
 
-    def __init__(self):
-        pass
+    _no_rule = {'rule': "Gozokia", 'status': 0}
+
+    def __init__(self, * args, **kwargs):
+        session = kwargs.get('session', False)
+        if session:
+            self.session_id = session
+        else:
+            self.session_id = uuid.uuid1()
+        user = kwargs.get('user', False)
+        if user:
+            self.user_id = user
+        else:
+            self.user_id = None
+        self.rules = Rules(sessionid=self.session_id)
 
     def initialize(self, * args, **kwargs):
         # Set the text analyzer. Default nltk (http://www.nltk.org/)
@@ -110,7 +124,7 @@ class Gozokia:
         """
         System rules are the core rules. 
         """
-        rule = "Gozokia"
+        rule = self._no_rule
         if self.sentence:
             sentence = self.sentence.lower()
             if sentence.startswith('gozokia'):
@@ -126,6 +140,22 @@ class Gozokia:
                     return "Bye", rule
         return False, rule
 
+    def retrospective(self):
+        """
+        Initialize the rules based on old chats of the session or the user
+        """
+        chat_history = self.db.get_chat(session=self.session_id, user=self.user_id)
+        for chat in chat_history:
+            if chat.get('type_rule', "") == 'O':
+                for r in self.rules.get_rules():
+                    if r['rule'] == chat['rule']:
+                        if chat['status'] == self.rules._STATUS_RULE_ACTIVE:
+                            self.rules.set_active_rule(r)
+                        elif chat['status'] == self.rules._STATUS_RULE_PENDING:
+                            self.rules.set_rule_status_pending(r)
+                        elif chat['status'] == self.rules._STATUS_RULE_COMPLETED:
+                            self.rules.set_rule_status_completed(r)
+
     def eval(self, sentence):
         """
         Params:
@@ -135,14 +165,17 @@ class Gozokia:
         response_output: string. the response to send to the IO output
         print_output: string. The response to print, no parsed on IO output
         """
+
         response_output = None
         print_output = None
         self.sentence = sentence
         self.analyzer.set(sentence)
 
         # Add the input to DDBB
-        self.db.set_chat(chat={'timestamp': datetime.datetime.now(), 'text': self.sentence, 'type': 'I'})
-
+        self.db.set_chat(**{'user': self.user_id, 'session': self.session_id,
+                            'text': self.sentence, 'type_rule': 'I',
+                            'rule': None, 'status': None})
+        self.retrospective()
         response_output, rule = self.check_system_rules()
         if not response_output:
             # Check rules:
@@ -152,13 +185,15 @@ class Gozokia:
                 response_output, print_output = rule_object.get_response()
             else:
                 response_output = "No rules. you said: {}".format(sentence)
-                rule = 'Gozokia'
+                rule = self._no_rule
 
         # Add the output to DDBB
-        print(rule)
-        self.db.set_chat(chat={'timestamp': datetime.datetime.now(),
-                               'text': response_output, 'type': 'O',
-                               'rule': rule['rule'], 'status': rule['status']})
+        self.db.set_chat(**{'user': self.user_id, 'session': self.session_id,
+                            'text': response_output, 'type_rule': 'O',
+                            'rule': rule['rule'], 'status': rule['status']})
+
+        print("#### DB")
+        print(self.db.get())
 
         return response_output, print_output
 
@@ -195,8 +230,10 @@ class Gozokia:
 
     def api(self, input_result):
         """
-        The api method's designed to recive a value and parse. This
+        The api methods designed to receive a value and parse. This
         method works with the settings:
         GOZOKIA_INPUT_TYPE = "value"
+        ------------------------------------------------------------
+        self.io.listen return a string
         """
-        return self.get_response(self.io.listen(value=input_result))
+        return self.get_response(input_result=self.io.listen(value=input_result))

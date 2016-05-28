@@ -2,13 +2,13 @@ from gozokia.core.rules import RuleBase
 
 
 class Bar(RuleBase):
+
     def __init__(self):
         self.set_reload(False)
 
     def condition_raise(self, *args, **kwargs):
-        self.analyzer = kwargs.get('analyzer')
-        self.sentence = self.analyzer.get_tagged()
-        if len([True for t in self.sentence if t == ('foo', 'NN')]) > 0:
+        super(Bar, self).condition_raise(*args, **kwargs)
+        if self.sentence.lower() == 'foo':
             return True
 
     def condition_completed(self, *args, **kwargs):
@@ -19,13 +19,13 @@ class Bar(RuleBase):
 
 
 class BarSecond(RuleBase):
+
     def __init__(self):
         self.set_reload(False)
 
     def condition_raise(self, *args, **kwargs):
-        self.analyzer = kwargs.get('analyzer')
-        self.sentence = self.analyzer.get_tagged()
-        if len([True for t in self.sentence if t == ('foo', 'NN')]) > 0:
+        super(BarSecond, self).condition_raise(*args, **kwargs)
+        if self.sentence.lower() == 'foo':
             return True
 
     def condition_completed(self, *args, **kwargs):

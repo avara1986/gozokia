@@ -36,6 +36,7 @@ class Debug(RuleBase):
         self.response_output = "Here is the debug response"
 
         if self.__SELECTED_OPTION is not None:
+            print("### RULES OF SESSION {}".format(self.gozokia.session_id))
             if self.__OPTIONS[self.__SELECTED_OPTION] == 'list_rules':
                 self.print_output = ("***** Activated rules *****\n")
                 for rule in self.gozokia.rules:
@@ -57,4 +58,3 @@ class Debug(RuleBase):
                 for setting in dir(settings):
                     if setting.isupper():
                         self.print_output += str(setting) + " = " + str(getattr(settings, setting)) + "\n"
-
