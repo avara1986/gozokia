@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # encoding: utf-8
+from __future__ import absolute_import, print_function, unicode_literals
 import os
-import sys
-sys.path.insert(0, os.getcwd())
+
 from gozokia import Gozokia
 from gozokia.core.rules import RuleBase
-from example.my_class import MyClassObjetive
+
+from my_class import MyClassObjetive
 # First, declare our settings file:
 os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings")
 
@@ -19,6 +20,7 @@ goz.rule(type=goz.OBJETIVE_COND, rank=2)(MyClassObjetive)
 # Register our class rules
 @goz.rule(type=goz.RAISE_COND, rank=3)
 class MyClass2(RuleBase):
+
     def condition_raise(self, *args, **kwargs):
         return False
 
