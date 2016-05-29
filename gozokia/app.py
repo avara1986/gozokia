@@ -1,6 +1,4 @@
 # encoding: utf-8
-import datetime
-
 import multiprocessing
 import os
 import re
@@ -122,7 +120,7 @@ class Gozokia:
 
     def check_system_rules(self):
         """
-        System rules are the core rules. 
+        System rules are the core rules.
         """
         rule = self._no_rule
         if self.sentence:
@@ -165,8 +163,6 @@ class Gozokia:
         response_output: string. the response to send to the IO output
         print_output: string. The response to print, no parsed on IO output
         """
-
-        response_output = None
         print_output = None
         self.sentence = sentence
         self.analyzer.set(sentence)

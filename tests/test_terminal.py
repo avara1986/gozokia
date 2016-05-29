@@ -3,7 +3,7 @@ import unittest
 import os
 from gozokia import Gozokia
 
-os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "settings_tests")
+os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", "tests.settings_tests")
 
 
 class TerminalTest(unittest.TestCase):
