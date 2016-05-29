@@ -65,6 +65,12 @@ pip install tox
 #!bash
 ./test
 ```
+
+Docs
+-------
+
+sphinx-build -b html docs docs/_build
+
 License
 =======
 
