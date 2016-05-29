@@ -2,10 +2,12 @@
 Gozokia
 =======
 
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Build Status](https://travis-ci.org/avara1986/gozokia.svg)](https://travis-ci.org/avara1986/gozokia)
 [![Coverage Status](https://coveralls.io/repos/avara1986/gozokia/badge.svg?branch=master&service=github)](https://coveralls.io/github/avara1986/gozokia?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/gozokia/badge/?version=latest)](http://gozokia.readthedocs.io/en/latest/?badge=latest)
 [![Requirements Status](https://requires.io/github/avara1986/gozokia/requirements.svg?branch=master)](https://requires.io/github/avara1986/gozokia/requirements/?branch=master)
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+
 Installation from repo
 ----------------------
 * Clone the project
@@ -66,10 +68,15 @@ pip install tox
 ./test
 ```
 
-Docs
+Run Docs
 -------
 
 sphinx-build -b html docs docs/_build
+
+Documentation
+=============
+
+See more in http://gozokia.readthedocs.io/en/latest/
 
 License
 =======
