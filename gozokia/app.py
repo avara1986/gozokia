@@ -152,9 +152,9 @@ class Gozokia:
                         if chat['status'] == self.rules._STATUS_RULE_ACTIVE:
                             self.rules.set_active_rule(r)
                         elif chat['status'] == self.rules._STATUS_RULE_PENDING:
-                            self.rules.set_rule_status_pending(r)
+                            self.rules.set_rule_pending(r)
                         elif chat['status'] == self.rules._STATUS_RULE_COMPLETED:
-                            self.rules.set_rule_status_completed(r)
+                            self.rules.set_rule_completed(r)
 
     def eval(self, sentence):
         """
@@ -179,11 +179,9 @@ class Gozokia:
         response_output, rule = self.check_system_rules()
         if not response_output:
             # Check rules:
-            rule = self.rules.get_rule(self)
-            if rule is not None:
-                rule_object = rule["class"]
-                response_output, print_output = rule_object.get_response()
-            else:
+            rule, response_output, print_output = self.rules.eval(self)
+            if not rule:
+                # Default "no rules"
                 response_output = "No rules. you said: {}".format(sentence)
                 rule = self._no_rule
 
@@ -191,9 +189,6 @@ class Gozokia:
         self.db.set_chat(**{'user': self.user_id, 'session': self.session_id,
                             'text': response_output, 'type_rule': 'O',
                             'rule': rule['rule'], 'status': rule['status']})
-
-        print("#### DB")
-        print(self.db.get())
 
         return response_output, print_output
 

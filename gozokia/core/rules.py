@@ -1,13 +1,20 @@
 # encoding: utf-8
 """
 Rules system.
-All rules inherit from RuleBase. All rules needs a condition, a response
+
 """
 import copy
 from operator import itemgetter
 
 
 class RuleBase(object):
+    """
+    All rules inherit from RuleBase. All rules needs a condition, a response.
+
+    RuleBase is the base model to all rules. with this class, the rules will can to access
+    to the main class (Gozokia), the sentence (the input), and/or the
+    analyzer (if it is active)
+    """
     completed = False
     reload = True
     response_output = ""
@@ -36,15 +43,15 @@ class RuleBase(object):
     def is_completed(self, *args, **kwargs):
         return self.completed
 
-    def set_completed(self):
-        self.completed = True
+    def set_completed(self, status=True):
+        self.completed = status
 
     def set_reload(self, reload):
         self.reload = reload
 
     def reload_rule(self):
         if self.reload:
-            self.set_completed()
+            self.set_completed(False)
             return True
         else:
             return False
@@ -57,7 +64,8 @@ class Rules(object):
     __rules_pool = []
     __rules_map = {}
 
-    __rules_completed = []
+    __rules_qeue = []
+    __rules_qeue_completed = []
 
     __active_rule = None
 
@@ -73,6 +81,7 @@ class Rules(object):
     _OBJETIVE_COND = 2
 
     __RULE_KEY_CLASS = "class"
+    __RULE_KEY_NAME = "rule"
 
     def __init__(self, * args, **kwargs):
         self.session_id = kwargs['sessionid']
@@ -90,13 +99,6 @@ class Rules(object):
         """
         self.__rules_qeue = copy.copy(self.__rules_pool)
         """
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        print("DESTROY OBJECTS")
-        del self.__rules_pool
-        del self.__rules_map
-        del self.__rules_completed
-        del self.__active_rule
 
     def add(self, rule_class, **options):
         rank = 10
@@ -121,13 +123,16 @@ class Rules(object):
                                       self._STATUS_RULES_KEY: self._STATUS_RULE_PENDING})
 
     def get_rules(self, type_rule=None):
+        """
+        return a diccionary of rules order by rank and filter by type or fule
+        """
         f = lambda x: True
         if type_rule in [self._RAISE_COND, self._OBJETIVE_COND]:
             f = lambda x: x['type'] == type_rule and x[self.__RULE_KEY_CLASS].completed == False
         return sorted(filter(f, self.__rules_qeue), key=itemgetter('rank'))
 
     def get_rules_completed(self):
-        return sorted(self.__rules_completed, key=itemgetter('rank'))
+        return sorted(self.__rules_qeue_completed, key=itemgetter('rank'))
 
     def get_raises(self):
         for rule in self.get_rules(type_rule=self._RAISE_COND):
@@ -142,36 +147,55 @@ class Rules(object):
         Get the active rule or find one.
         """
         if self.exist_active_rule():
-            active_rule_object = self.get_active_rule(self.__RULE_KEY_CLASS)
+            active_rule_object = self.get_active_rule().get(self.__RULE_KEY_CLASS)
             active_rule_object.condition_completed(gozokia=gozokia)
             if active_rule_object.is_completed():
-                gozokia.logger.debug("RULE {} end".format(active_rule_object))
-                if active_rule_object.reload_rule() is False:
-                    self.pop(self.get_active_rule())
-                self.set_active_rule(None)
+                self.complete_active_rule()
                 self.get_rule(gozokia=gozokia)
         else:
             for r in self:
-                if r['class'].condition_raise(gozokia=gozokia):
-                    gozokia.logger.debug("RULE {} start".format(r['class']))
+                if r.get(self.__RULE_KEY_CLASS).condition_raise(gozokia=gozokia):
                     self.set_active_rule(r)
                     break
         return self.__active_rule
 
+    def eval(self, gozokia):
+        response_output = None
+        print_output = None
+        rule = self.get_rule(gozokia)
+        if rule:
+            active_rule_object = rule.get(self.__RULE_KEY_CLASS)
+            response_output, print_output = active_rule_object.get_response()
+            active_rule_object.condition_completed(gozokia=gozokia)
+            if active_rule_object.is_completed():
+                self.complete_active_rule()
+        return rule, response_output, print_output
+
     def set_rule_status_active(self, rule):
+        print("RULE {} start".format(rule.get(self.__RULE_KEY_NAME)))
         rule[self._STATUS_RULES_KEY] = self._STATUS_RULE_ACTIVE
         self.set_active_rule(None)
 
     def set_rule_status_pending(self, rule):
+        print("RULE {} pending".format(rule.get(self.__RULE_KEY_NAME)))
         rule[self._STATUS_RULES_KEY] = self._STATUS_RULE_PENDING
 
     def set_rule_status_completed(self, rule):
+        print("RULE {} completed".format(rule.get(self.__RULE_KEY_NAME)))
         rule[self._STATUS_RULES_KEY] = self._STATUS_RULE_COMPLETED
 
-    def set_active_rule(self, rule=None):
-        if rule:
-            self.set_rule_status_active(rule)
-        self.__active_rule = rule
+    def complete_active_rule(self):
+        rule = self.get_active_rule()
+        self.set_rule_completed(rule)
+        self.set_active_rule(None)
+
+    def set_rule_completed(self, rule):
+        self.set_rule_status_completed(rule)
+        if rule.get(self.__RULE_KEY_CLASS).reload_rule() is False:
+            self.pop(rule)
+
+    def set_rule_pending(self, rule):
+        self.set_rule_status_pending(rule)
 
     def get_active_rule(self, key=None):
         if key is None:
@@ -179,6 +203,11 @@ class Rules(object):
         else:
             rule = self.__active_rule[key]
         return rule
+
+    def set_active_rule(self, rule=None):
+        if rule:
+            self.set_rule_status_active(rule)
+        self.__active_rule = rule
 
     def stop_active_rule(self):
         self.set_rule_status_pending(self.__active_rule)
@@ -188,9 +217,12 @@ class Rules(object):
         return self.__active_rule is not None
 
     def pop(self, rule):
-        self.__rules_qeue = [r for r in self if r != rule]
-        self.set_rule_status_completed(rule)
-        self.__rules_completed.append(rule)
+        # Pop rule from main queue
+        self.__rules_qeue = [r for r in self if r.get(self.__RULE_KEY_CLASS) != rule.get(self.__RULE_KEY_CLASS)]
+
+        # Add rule to completed queue
+        if rule.get(self.__RULE_KEY_CLASS) not in set(r.get(rule.get(self.__RULE_KEY_CLASS)) for r in self.__rules_qeue_completed):
+            self.__rules_qeue_completed.append(rule)
 
     def __getitem__(self, key):
         if key in self.__rules_qeue:

@@ -20,7 +20,7 @@ class GreetingObjetive(RuleBase, ModelMixin):
 
     def condition_completed(self, *args, **kwargs):
         super(GreetingObjetive, self).condition_completed(*args, **kwargs)
-
+        print("#### CHECK CONDITION")
         user = self.get_user()
         if not user.first_name:
             self.sentence_parsed = self.analyzer.get_tagged()
@@ -45,6 +45,7 @@ class GreetingObjetive(RuleBase, ModelMixin):
 class GreetingRaise(GreetingObjetive):
 
     def condition_raise(self, *args, **kwargs):
+        print("### RAISE")
         super(GreetingRaise, self).condition_raise(*args, **kwargs)
         if self.sentence.startswith('hi'):
             return True
