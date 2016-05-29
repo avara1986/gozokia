@@ -1,4 +1,6 @@
 [run]
-source = gozokia
+include=*gozokia/*
 omit =
-    example/*
+    *example/*
+    .tox/*
+    tests/*

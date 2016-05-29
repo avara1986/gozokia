@@ -40,6 +40,7 @@ setup(
     platforms=["any"],
     keywords="gozokia",
     url='https://github.com/avara1986/gozokia.git',
+    test_suite='nose.collector',
     packages=find_packages(),
     include_package_data=True,
 )
