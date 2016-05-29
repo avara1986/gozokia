@@ -9,6 +9,9 @@ class Database(ModelBase):
     def __init__(self):
         pass
 
+    def get_db(self):
+        pass
+
     def get(self, key=None, search=None):
         if key is not None:
             try:

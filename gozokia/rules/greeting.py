@@ -32,5 +32,5 @@ class GreetingRaise(GreetingObjetive):
 
     def condition_raise(self, *args, **kwargs):
         super(GreetingRaise, self).condition_raise(*args, **kwargs)
-        if self.sentence.startswith('hi'):
+        if self.sentence.lower().startswith('hi'):
             return True

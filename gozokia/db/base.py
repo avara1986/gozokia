@@ -25,13 +25,13 @@ class ModelBase:
         pass
 
     @abstractmethod
+    def set(self, *args, **kwargs):
+        pass
+
+    @abstractmethod
     def set_chat(self, user, session, text, type_rule, rule, status):
         pass
 
     @abstractmethod
     def get_chat(self, session, user=None):
-        pass
-
-    @abstractmethod
-    def set(self, *args, **kwargs):
         pass
