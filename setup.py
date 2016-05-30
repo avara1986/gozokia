@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2016 by Alberto Vara <a.vara.1986@gmail.com>
-from setuptools import setup, find_packages
-import codecs
 import os
+import codecs
+from setuptools import setup, find_packages
+
 
 version = __import__('gozokia').__version__
 author = __import__('gozokia').__author__
 author_email = __import__('gozokia').__email__
 
-if os.path.exists('README.rst'):
+if os.path.exists('README.md'):
     long_description = codecs.open('README.md', 'r', 'utf-8').read()
 else:
     long_description = 'See https://github.com/avara1986/gozokia'

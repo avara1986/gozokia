@@ -31,11 +31,10 @@ class Io(object):
         self.set_input_method(kwargs.get('input_type', settings.GOZOKIA_INPUT_TYPE))
         self.set_output_method(kwargs.get('output_type', settings.GOZOKIA_OUTPUT_TYPE))
 
-    '''
-    Input configuration
-    '''
-
     def set_input_method(self, input_type):
+        """
+        Input configuration
+        """
         try:
             self._INPUT_SELECTED = self._INPUT_METHODS[input_type]
         except KeyError:
@@ -56,11 +55,10 @@ class Io(object):
     def listen(self, *args, **kwargs):
         return self.input.listen(*args, **kwargs)
 
-    '''
-    Output configuration
-    '''
-
     def set_output_method(self, output_type):
+        """
+        Output configuration
+        """
         try:
             self._OUTPUT_SELECTED = self._OUTPUT_METHODS[output_type]
         except KeyError:
