@@ -1,14 +1,24 @@
 import os
-import speech_recognition as sr
 import subprocess
-
+"""
+Optional speech_recognition
+"""
 try:
-    from gtts import gTTS
-    r = sr.Recognizer()
+    import speech_recognition as sr
     m = sr.Microphone()
+    r = sr.Recognizer()
 except (ImportError, AttributeError) as e:
     r = None
     m = None
+
+"""
+Optional Google Text to Speech (gTTS) and pyAduio
+"""
+try:
+    from gtts import gTTS
+
+except (ImportError, AttributeError) as e:
+    gTTS = None
 
 from gozokia.conf import settings
 from gozokia.i_o.exceptions import GozokiaIoError
@@ -74,9 +84,12 @@ class VoiceResponseMixin(object):
         Sends text to Google's text to speech service
         and returns created speech (wav file). "
         """
-        tts = gTTS(text=text, lang='en')
-        tts.save(fname)
-        self.__play_mp3(fname)
+        if gTTS:
+            tts = gTTS(text=text, lang='en')
+            tts.save(fname)
+            self.__play_mp3(fname)
+        else:
+            raise GozokiaIoError("No Google Text to Speech")
 
     def __play_mp3(self, path):
         if not os.path.isfile(path):
