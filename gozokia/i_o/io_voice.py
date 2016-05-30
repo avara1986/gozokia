@@ -4,14 +4,14 @@ import subprocess
 
 try:
     from gtts import gTTS
-except ImportError:
-    pass
+    r = sr.Recognizer()
+    m = sr.Microphone()
+except (ImportError, AttributeError) as e:
+    r = None
+    m = None
 
 from gozokia.conf import settings
 from gozokia.i_o.exceptions import GozokiaIoError
-
-r = sr.Recognizer()
-m = sr.Microphone()
 
 
 class VoiceRecognizerMixin(object):
@@ -32,28 +32,31 @@ class VoiceRecognizerMixin(object):
 
     def listen_audio(self, language):
         # use the default microphone as the audio source
-        try:
-            with m as source:
-                r.adjust_for_ambient_noise(source)
-                print("Set minimum energy threshold to {}".format(r.energy_threshold))
-                # listen for the first phrase and extract it into audio data
-                input_audio = r.listen(source)
-                print("Got it! Now to recognize it...")
-                try:
-                    # using Google Speech Recognition
-                    input_result = r.recognize_google(input_audio, language=language)
-                    if str is bytes:  # this version of Python uses bytes for strings (Python 2)
-                        input_result = input_result.encode('utf8')
-                except sr.UnknownValueError:
-                    input_result = ("Google Speech Recognition could not understand audio")
-                except sr.RequestError as e:
-                    input_result = ("Could not request results from Google Speech Recognition service; {0}".format(e))
-                # speech is unintelligible
-                except LookupError:
-                    input_result = ("I don't understand you")
-            return input_result
-        except Exception as e:
-            raise GozokiaIoError(e)
+        if m:
+            try:
+                with m as source:
+                    r.adjust_for_ambient_noise(source)
+                    print("Set minimum energy threshold to {}".format(r.energy_threshold))
+                    # listen for the first phrase and extract it into audio data
+                    input_audio = r.listen(source)
+                    print("Got it! Now to recognize it...")
+                    try:
+                        # using Google Speech Recognition
+                        input_result = r.recognize_google(input_audio, language=language)
+                        if str is bytes:  # this version of Python uses bytes for strings (Python 2)
+                            input_result = input_result.encode('utf8')
+                    except sr.UnknownValueError:
+                        input_result = ("Google Speech Recognition could not understand audio")
+                    except sr.RequestError as e:
+                        input_result = ("Could not request results from Google Speech Recognition service; {0}".format(e))
+                    # speech is unintelligible
+                    except LookupError:
+                        input_result = ("I don't understand you")
+                return input_result
+            except Exception as e:
+                raise GozokiaIoError(e)
+        else:
+            raise GozokiaIoError("No speech_recognition detected")
 
 
 class VoiceResponseMixin(object):
