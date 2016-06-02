@@ -95,6 +95,7 @@ class Gozokia:
 
         # Initialize the logger
         self.logger = Logging(__name__)
+        self.logger.debug("DB selected: {}".format(settings.DATABASES['default']['ENGINE']))
         self.logger.debug("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
         self.logger.debug("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
 
@@ -143,15 +144,16 @@ class Gozokia:
         Initialize the rules based on old chats of the session or the user
         """
         chat_history = self.db.get_chat(session=self.session_id, user=self.user_id)
+        print(chat_history)
         for chat in chat_history:
-            if chat.get('type_rule', "") == 'O':
+            if chat.type_rule == 'O':
                 for r in self.rules.get_rules():
-                    if r['rule'] == chat['rule']:
-                        if chat['status'] == self.rules._STATUS_RULE_ACTIVE:
+                    if r['rule'] == chat.rule:
+                        if chat.status == self.rules._STATUS_RULE_ACTIVE:
                             self.rules.set_active_rule(r)
-                        elif chat['status'] == self.rules._STATUS_RULE_PENDING:
+                        elif chat.status == self.rules._STATUS_RULE_PENDING:
                             self.rules.set_rule_pending(r)
-                        elif chat['status'] == self.rules._STATUS_RULE_COMPLETED:
+                        elif chat.status == self.rules._STATUS_RULE_COMPLETED:
                             self.rules.set_rule_completed(r)
 
     def eval(self, sentence):
@@ -215,6 +217,7 @@ class Gozokia:
         p.start()
         while output_result != "Bye":
             output_result = self.get_response(self.io.listen())
+            print(output_result)
 
         self.logger.debug(self.db.get())
         p.terminate()

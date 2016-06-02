@@ -1,3 +1,5 @@
+# Optional to use SQLAlchemy
+#SQLAlchemy==1.0.13
 # Optional if use a voice output
 #gTTS==1.1.5
 #PyAudio==0.2.9

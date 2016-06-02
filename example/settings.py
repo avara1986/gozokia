@@ -7,12 +7,12 @@ GOZOKIA_LANGUAGE = "en-US"
 '''
 DATABASES = {
     'default': {
-        'ENGINE': 'gozokia.db.backends.mongodb',
-        'NAME': 'gozokia',
+        'ENGINE': 'gozokia.db.backends.sqlite',
+        'NAME': '',
         'USER': '',
         'PASSWORD': '',
-        'HOST': '192.168.100.7',
-        'PORT': '27017',
+        'HOST': '',
+        'PORT': '',
     }
 }
 '''

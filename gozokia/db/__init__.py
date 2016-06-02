@@ -1,19 +1,20 @@
 import os
 import importlib
 
+from gozokia.conf import settings
+
 
 class Model(object):
     DEFAULT_ENGINE = 'gozokia.db.backends.memory'
 
     def __init__(self, *args, **kwargs):
-        try:
-            mod = importlib.import_module(settings.DATABASES['default']['ENGINE'])
-            self.db = mod.Database()
-        except Exception:
-            mod = importlib.import_module(self.DEFAULT_ENGINE)
-            self.db = mod.Database()
+        pass
 
     def __new__(cls, *args, **kwargs):
+        """
+        mod = importlib.import_module(settings.DATABASES['default']['ENGINE'])
+        return mod.Database()
+        """
         try:
             mod = importlib.import_module(settings.DATABASES['default']['ENGINE'])
             return mod.Database()

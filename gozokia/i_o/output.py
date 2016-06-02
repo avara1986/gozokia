@@ -8,8 +8,9 @@ class OutputTerminalText(OutputBase):
 
     def response(self, *args, **kwargs):
         super(OutputTerminalText, self).response(*args, **kwargs)
-        print("- Gozokia: ", kwargs.get('response', ""))
-        return True
+        response = kwargs.get('response', "")
+        print("- Gozokia: ", response)
+        return response
 
 
 class OutputValue(OutputBase):
@@ -29,6 +30,7 @@ class OutputTerminalVoice(OutputBase, VoiceResponseMixin):
         super(OutputTerminalVoice, self).response(*args, **kwargs)
         if 'response' not in kwargs:
             raise GozokiaOutputError('Response not send')
-        self.response_speak(kwargs.get('response', ""), language=language)
-        print("- Gozokia: ", kwargs.get('response', ""))
-        return True
+        response = kwargs.get('response', "")
+        self.response_speak(response, language=language)
+        print("- Gozokia: ", response)
+        return response

@@ -8,3 +8,4 @@ I/O
 
 .. autoclass:: gozokia.i_o.io.Io
     :members:
+    :undoc-members:

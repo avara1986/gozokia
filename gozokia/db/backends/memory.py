@@ -3,6 +3,13 @@ import datetime
 from gozokia.db.base import ModelBase
 
 
+class AttrDict(dict):
+
+    def __init__(self, *args, **kwargs):
+        super(AttrDict, self).__init__(*args, **kwargs)
+        self.__dict__ = self
+
+
 class Database(ModelBase):
     _records = {}
 
@@ -37,7 +44,7 @@ class Database(ModelBase):
         chat = {'user': user, 'session': session, 'timestamp': datetime.datetime.now(),
                 'text': text, 'type_rule': type_rule,
                 'rule': rule, 'status': status}
-        self.set({'chat': chat})
+        self.set({'chat': AttrDict(chat)})
 
     def get_chat(self, session, user=None):
         chat_history = self.get()['chat']

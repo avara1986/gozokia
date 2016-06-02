@@ -17,7 +17,6 @@ Gozokia do the logic.
    installation
    configuration
    usage
-   io
 
 .. toctree::
    :maxdepth: 2
