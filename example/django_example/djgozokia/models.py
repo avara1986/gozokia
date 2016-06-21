@@ -19,5 +19,12 @@ class GozokiaChat(models.Model):
     type = models.IntegerField(
         choices=TYPE_CHAT,
     )
-
     objects = GozokiaChatManager()
+
+    @classmethod
+    def set_chat(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def get_chat(cls, *args, **kwargs):
+        return []

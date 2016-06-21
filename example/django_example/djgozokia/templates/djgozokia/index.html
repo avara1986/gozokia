@@ -1,0 +1,58 @@
+<form >
+<div id="chat-window"></div>
+
+<input type="text" id="text_input"/>
+<button type="submit" onclick="sendMessage(); return false;">Enviar</button>
+</form>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script>
+
+function sendMessage() {
+    var input = $('#text_input').val();
+    $.ajax({
+        dataType: "json",
+        method: "GET",
+        data: {'input': input},
+        url: "{% url 'gozokia-chat-api' %}",
+        success: function(data) {
+        	$('#chat-window').append("<div class='line'><span>Tu:</span> "+data.input+"</div>");
+        	$('#chat-window').append("<div class='line'><span>Gozokia:</span> "+data.output+"</div>");
+            console.log(data);
+            $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
+            $('#text_input').val('');
+        },
+        statusCode: {
+            404: function() {
+                $('.loading').css('display', 'none');
+                $('#css_error').css('display', 'block');
+            },
+            405: function() {
+                $('.loading').css('display', 'none');
+                $('#css_error').css('display', 'block');
+
+            },
+            500: function() {
+                $('.loading').css('display', 'none');
+                $('#css_error').css('display', 'block');
+            }
+        }
+    });
+}
+</script>
+<style>
+#chat-window
+{
+    width: 500px;
+    height: 200px;
+    overflow-y: auto;
+}
+#chat-window .line
+{
+	padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+#chat-window .line span
+{
+	font-weight: bold;
+}
+</style>

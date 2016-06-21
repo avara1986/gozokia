@@ -20,14 +20,13 @@ class GreetingObjetive(RuleBase, ModelMixin):
 
     def condition_completed(self, *args, **kwargs):
         super(GreetingObjetive, self).condition_completed(*args, **kwargs)
-        print("#### CHECK CONDITION")
         user = self.get_user()
         if not user.first_name:
-            self.sentence_parsed = self.analyzer.get_tagged()
-            if len(self.sentence_parsed) == 1 and self.sentence_parsed[0][1] == "NN":
-                name = " ".join(name for name, syntax in self.sentence_parsed)
-            else:
-                name = " ".join(name for name, syntax in filter(lambda x: x[1] == 'NNP', self.sentence_parsed))
+            # TODO: this is an aval example very very simple. Refactored
+            name = ""
+            sentence = self.sentence.lower()
+            if sentence.startswith('i am') or sentence.startswith("i'm") or sentence.startswith("im"):
+                name = sentence.split(" ")[-1]
             user.first_name = name
             user.save()
         else:
@@ -45,7 +44,6 @@ class GreetingObjetive(RuleBase, ModelMixin):
 class GreetingRaise(GreetingObjetive):
 
     def condition_raise(self, *args, **kwargs):
-        print("### RAISE")
         super(GreetingRaise, self).condition_raise(*args, **kwargs)
         if self.sentence.startswith('hi'):
             return True
