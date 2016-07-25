@@ -1,0 +1,57 @@
+from functools import reduce
+import nltk
+#sentence array to string:
+sentenceString = reduce(lambda x, y: x+" "+y, sentencesArray)
+
+sentenceString = "Mi nombre es Alberto. ¿Cuántos años tienes? tengo 2 años, Soy Juan, ¿y tu?"
+sentenceString = "Gozokia, how are you today?. I'm fine. What is your name?. My name is Alberto, Why do you exist? It's my worst day. Does you runs? Yes i do, i'm running"
+
+#sentence string to array of sentences:
+sentencesArray = nltk.sent_tokenize(sentenceString)
+
+# sentence string to array:
+tokenized_sentences = [nltk.word_tokenize(sentence) for sentence in sentencesArray]
+
+# sentence array to taggeds:
+tagged_sentences = [nltk.pos_tag(sentence) for sentence in tokenized_sentences]
+
+#taggeds to entities:
+if len(tagged_sentences) > 1
+    [f for f in nltk.chunk.ne_chunk_sents(tagged_sentences)]
+else:
+    entities = nltk.chunk.ne_chunk(tagged_sentences)
+
+
+from nltk.stem import WordNetLemmatizer
+lemmatizer.lemmatize("runs", pos="v") = run
+print(lemmatizer.lemmatize("worst", pos="a")) = bad
+
+
+pattern = "NP: {<DT>?<JJ>*<NN>}" # define a tag pattern of an NP chunk
+NPChunker = nltk.RegexpParser(pattern) # create a chunk parser
+result = NPChunker . parse(sentence) # parse the example sentence
+
+
+for word, pos in tagged:
+    pos = {
+        pos.startswith('N'): wordnet.NOUN,
+        pos.startswith('V'): wordnet.VERB,
+        pos.startswith('J'): wordnet.ADJ,
+        pos.startswith('R'): wordnet.ADV,
+        }.get(pos, None)
+    if pos:
+        synsets = wordnet.synsets(word, pos=pos)
+    else:
+        synsets = wordnet.synsets(word)
+
+# Saber el tipo de tree que es:
+tree1.label() == "NP"
+http://stackoverflow.com/questions/14841997/how-to-navigate-a-nltk-tree-tree
+http://stackoverflow.com/questions/33901232/how-to-convert-from-tree-type-to-string-type-in-python-by-nltk
+
+http://www.slideshare.net/amyiris/ai-and-python-developing-a-conversational-interface-using-python
+
+
+# Limpiar HTML:
+raws = nltk.clean_html(html)
+sentencesArray = nltk.word_tokenize(sentenceString)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-SYSTEM = 1
-USER = 2
+SYSTEM = "O"
+USER = "I"
 
 TYPE_CHAT = (
     (SYSTEM, u'Gozokia'),

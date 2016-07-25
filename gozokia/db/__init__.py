@@ -12,8 +12,7 @@ class Model(object):
 
     def __new__(cls, *args, **kwargs):
         """
-        mod = importlib.import_module(settings.DATABASES['default']['ENGINE'])
-        return mod.Database()
+
         """
         try:
             mod = importlib.import_module(settings.DATABASES['default']['ENGINE'])

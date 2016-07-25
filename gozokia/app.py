@@ -47,7 +47,7 @@ class Gozokia:
     """
     Queue of rules
     """
-    rules = None
+    rules = []
     """
     Text analyzer controller
     """
@@ -98,6 +98,7 @@ class Gozokia:
         self.logger.debug("DB selected: {}".format(settings.DATABASES['default']['ENGINE']))
         self.logger.debug("Input selected: {}".format(settings.GOZOKIA_INPUT_TYPE))
         self.logger.debug("Output selected: {}".format(settings.GOZOKIA_OUTPUT_TYPE))
+        self.logger.debug("Model: {}".format(self.db,))
 
         # Initialize the i/o methods. Default input text and output text
         self.set_io(input_type=settings.GOZOKIA_INPUT_TYPE,
@@ -148,7 +149,7 @@ class Gozokia:
         for chat in chat_history:
             if chat.type_rule == 'O':
                 for r in self.rules.get_rules():
-                    if r['rule'] == chat.rule:
+                    if str(r['rule']) == str(chat.rule):
                         if chat.status == self.rules._STATUS_RULE_ACTIVE:
                             self.rules.set_active_rule(r)
                         elif chat.status == self.rules._STATUS_RULE_PENDING:

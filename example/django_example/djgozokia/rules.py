@@ -21,6 +21,8 @@ class GreetingObjetive(RuleBase, ModelMixin):
     def condition_completed(self, *args, **kwargs):
         super(GreetingObjetive, self).condition_completed(*args, **kwargs)
         user = self.get_user()
+        print("User:")
+        print(self.get_user())
         if not user.first_name:
             # TODO: this is an aval example very very simple. Refactored
             name = ""

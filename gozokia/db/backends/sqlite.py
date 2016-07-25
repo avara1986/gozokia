@@ -1,5 +1,6 @@
 import os
 import sys
+
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
@@ -9,12 +10,6 @@ Base = declarative_base()
 
 from gozokia.conf import settings
 from gozokia.db.base import ModelBase
-'''
-{'user': self.user_id, 'session': self.session_id,
-                            'text': self.sentence, 'type_rule': 'I',
-                            'rule': None, 'status': None}
-
-'''
 
 
 class Chat(Base):
@@ -46,6 +41,12 @@ class Database(ModelBase):
         pass
 
     def set_chat(self, *args, **kwargs):
+        """
+        {'user': self.user_id, 'session': self.session_id,
+                                    'text': self.sentence, 'type_rule': 'I',
+                                    'rule': None, 'status': None}
+
+        """
         kwargs['session'] = str(kwargs['session'])
         new_chat = Chat(**kwargs)
         self.db.add(new_chat)

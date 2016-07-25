@@ -9,5 +9,10 @@ class GozokiaError(Exception):
     pass
 
 
+class GozokiaNotImplemented(Exception):
+    '''raise this when there's a lookup error for my app'''
+    pass
+
+
 class ImproperlyConfigured(Exception):
     pass

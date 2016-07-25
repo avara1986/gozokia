@@ -1,5 +1,7 @@
 from pymongo import MongoClient
+
 from gozokia.conf import settings
+from gozokia.core.exceptions import GozokiaNotImplemented
 from gozokia.db.base import ModelBase
 
 
@@ -26,3 +28,6 @@ class Database(ModelBase):
 
     def set_chat(self, chat):
         self.set({'chat': chat})
+
+    def get_chat(self, session, user=None):
+        raise GozokiaNotImplemented()

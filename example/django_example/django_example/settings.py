@@ -122,6 +122,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+os.environ.setdefault("GOZOKIA_SETTINGS_MODULE", os.getenv("DJANGO_SETTINGS_MODULE"))
+
 # Gozokia conf
 GOZOKIA_INPUT_TYPE = "value"
 
