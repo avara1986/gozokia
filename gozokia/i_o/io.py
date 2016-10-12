@@ -38,7 +38,7 @@ class Io(object):
         try:
             self._INPUT_SELECTED = self._INPUT_METHODS[input_type]
         except KeyError:
-            raise GozokiaIoError(__class__.__name__ + ": Input method {} not exist".format(input_type))
+            raise GozokiaIoError(self.__class__.__name__ + ": Input method {} not exist".format(input_type))
 
         # Initialize the input method
         input_module = importlib.import_module('gozokia.i_o.input')
@@ -62,7 +62,7 @@ class Io(object):
         try:
             self._OUTPUT_SELECTED = self._OUTPUT_METHODS[output_type]
         except KeyError:
-            raise GozokiaIoError(__class__.__name__ + ": Output method {} not exist".format(output_type))
+            raise GozokiaIoError(self.__class__.__name__ + ": Output method {} not exist".format(output_type))
         output_module = importlib.import_module('gozokia.i_o.output')
         if self._OUTPUT_SELECTED == self._VALUE:
             self.output = output_module.OutputValue()
@@ -70,6 +70,8 @@ class Io(object):
             self.output = output_module.OutputTerminalText()
         elif self._OUTPUT_SELECTED == self._VOICE:
             self.output = output_module.OutputTerminalVoice()
+        else:
+            raise GozokiaIoError(self.__class__.__name__ + ": No Output method for [{}] {}".format(self._OUTPUT_SELECTED, output_type))
 
     def get_output_method(self):
         return self._OUTPUT_SELECTED
